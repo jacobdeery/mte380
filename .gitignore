@@ -1,1 +1,5 @@
+# Bazel directories
+bazel-*
+
+# Editor files/directories
 .idea
