@@ -1,13 +1,12 @@
 #!/bin/bash
 
-WORKSPACE_DIR=$(bazel info workspace)
-
+WORKSPACE_DIR=$(git rev-parse --show-toplevel)
 cd $WORKSPACE_DIR
 
 echo "Running clang-format..."
-git status -s -u | grep '\.cpp$\|\.h$' | sed "s/^.\{3\}//" | xargs clang-format -i
+git ls-files -m | grep '\.cpp$\|\.h$' | xargs clang-format -i
 
 echo "Running buildifier..."
-git status -s -u | grep 'WORKSPACE\|BUILD\|\.bzl$' | sed "s/^.\{3\}//" | xargs buildifier
+git ls-files -m | grep 'WORKSPACE\|BUILD\|\.bzl$' | xargs buildifier
 
 echo "Formatting completed."
