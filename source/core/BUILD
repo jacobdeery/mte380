@@ -6,9 +6,11 @@ cc_binary(
 
 cc_library(
     name = "logging",
-    hdrs = ["logging.h"],
     srcs = ["logging.cpp"],
-    deps = ["@boost//:date_time",
-            "@boost//:filesystem",
-            "@boost//:log"],
+    hdrs = ["logging.h"],
+    deps = [
+        "@boost//:date_time",
+        "@boost//:filesystem",
+        "@boost//:log",
+    ],
 )
