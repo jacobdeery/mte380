@@ -3,3 +3,4 @@ bazel-*
 
 # Editor files/directories
 .idea
+.vscode
