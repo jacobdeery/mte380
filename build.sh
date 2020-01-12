@@ -1,1 +1,3 @@
+#!/usr/bin/bash
+
 bazel build ...
