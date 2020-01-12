@@ -15,6 +15,7 @@
 
 namespace logging = boost::log;
 
+// TODO(jacob): fix this hardcoded path.
 const std::string log_dir{"D:/Documents/School/3B/MTE380/logs"};
 
 namespace mte {
