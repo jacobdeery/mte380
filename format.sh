@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 WORKSPACE_DIR=$(bazel info workspace)
 
