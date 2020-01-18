@@ -16,22 +16,11 @@
 namespace logging = boost::log;
 
 // TODO(jacob): fix this hardcoded path.
-const std::string log_dir{"D:/Documents/School/3B/MTE380/logs"};
+const boost::filesystem::path log_dir{"~/logs"};
 
 namespace mte {
 
 void InitializeLogging(const std::string& process_name) {
-    const auto logging_timestamp = boost::posix_time::second_clock::local_time();
-    const auto facet = new boost::posix_time::time_facet();
-    facet->format("%Y%m%d_%H%M%S");
-
-    std::stringstream stream;
-    stream.imbue(std::locale(std::cout.getloc(), facet));
-    stream << logging_timestamp;
-
-    boost::filesystem::path log_path{log_dir};
-    log_path /= stream.str();
-
     const auto log_formatter = [process_name](logging::record_view const& rec,
                                               logging::formatting_ostream& stream) {
         auto date_time_formatter =
@@ -41,9 +30,17 @@ void InitializeLogging(const std::string& process_name) {
         stream << " [" << process_name << "]: [" << rec[logging::trivial::severity] << "] "
                << rec[logging::expressions::smessage];
     };
+    
+    const auto logging_timestamp = boost::posix_time::second_clock::local_time();
+    const auto facet = new boost::posix_time::time_facet();
+    facet->format("%Y%m%d_%H%M%S");
+
+    std::stringstream stream;
+    stream.imbue(std::locale(std::cout.getloc(), facet));
+    stream << logging_timestamp;
 
     logging::add_file_log(
-        logging::keywords::file_name = (log_path / (process_name + ".log")).string(),
+        logging::keywords::file_name = (log_dir / stream.str() / (process_name + ".log")).string(),
         logging::keywords::format = log_formatter);
 
     logging::add_console_log(std::cout, logging::keywords::format = log_formatter);
