@@ -27,3 +27,17 @@ new_git_repository(
     remote = "https://gitlab.com/libeigen/eigen",
     shallow_since = "1578751349 +0100",
 )
+
+new_git_repository(
+    name = "msgpack",
+    build_file = "@//third_party:msgpack.BUILD",
+    commit = "8085ab8721090a447cf98bb802d1406ad7afe420",
+    remote = "https://github.com/msgpack/msgpack-c",
+    shallow_since = "1575956176 +0900",
+)
+
+git_repository(
+    name = "googletest",
+    remote = "https://github.com/google/googletest",
+    tag = "release-1.10.0",
+)
