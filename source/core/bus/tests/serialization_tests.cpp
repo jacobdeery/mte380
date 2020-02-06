@@ -2,6 +2,8 @@
 
 #include "source/core/bus/serialization.h"
 
+using namespace mte::bus;
+
 class SerializableClass {
    public:
     SerializableClass() = default;
