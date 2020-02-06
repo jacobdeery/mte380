@@ -1,10 +1,12 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "localization",
+    name = "pose",
+    srcs = ["pose.cpp"],
     hdrs = ["pose.h"],
     deps = [
         "//source/core:logging",
+        "//source/core/bus:serialization",
         "@eigen",
     ],
 )
