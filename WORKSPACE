@@ -44,6 +44,16 @@ new_git_repository(
     shallow_since = "1578644481 +0000",
 )
 
+http_archive(
+    name = "zeromq",
+    build_file = "@//third_party/zeromq:zeromq.BUILD",
+    patch_tool = "patch",
+    patches = ["@//third_party/zeromq:zeromq_platform_hpp.patch"],
+    sha256 = "02ecc88466ae38cf2c8d79f09cfd2675ba299a439680b64ade733e26a349edeb",
+    strip_prefix = "libzmq-4.3.2",
+    urls = ["https://github.com/zeromq/libzmq/archive/v4.3.2.tar.gz"],
+)
+
 git_repository(
     name = "googletest",
     remote = "https://github.com/google/googletest",

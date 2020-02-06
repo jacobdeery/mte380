@@ -8,4 +8,5 @@ cc_library(
     ]),
     strip_include_prefix = "src/zmqpp",
     visibility = ["//visibility:public"],
+    deps = ["@zeromq"],
 )
