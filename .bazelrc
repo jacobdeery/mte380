@@ -3,3 +3,5 @@ build --incompatible_enable_cc_toolchain_resolution
 build:arm --incompatible_enable_cc_toolchain_resolution
 build:arm --platforms=//:arm_platform
 build:arm --extra_toolchains=//toolchains:arm_toolchain
+
+test --test_output=errors
