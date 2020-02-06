@@ -9,6 +9,11 @@
     BOOST_LOG_TRIVIAL(error) << msg; \
     throw std::runtime_error(msg);
 
+#define CHECK(cond, msg)                                \
+    if (!(cond)) {                                      \
+        LOG_ERROR(std::string("CHECK failed: ") + msg); \
+    }
+
 namespace mte {
 
 void InitializeLogging(const std::string& process_name);
