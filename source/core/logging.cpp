@@ -16,7 +16,7 @@
 namespace logging = boost::log;
 
 // TODO(jacob): fix this hardcoded path.
-const boost::filesystem::path log_dir{"~/logs"};
+const boost::filesystem::path log_dir{"/logs"};
 
 namespace mte {
 
@@ -30,7 +30,7 @@ void InitializeLogging(const std::string& process_name) {
         stream << " [" << process_name << "]: [" << rec[logging::trivial::severity] << "] "
                << rec[logging::expressions::smessage];
     };
-    
+
     const auto logging_timestamp = boost::posix_time::second_clock::local_time();
     const auto facet = new boost::posix_time::time_facet();
     facet->format("%Y%m%d_%H%M%S");
@@ -41,7 +41,7 @@ void InitializeLogging(const std::string& process_name) {
 
     logging::add_file_log(
         logging::keywords::file_name = (log_dir / stream.str() / (process_name + ".log")).string(),
-        logging::keywords::format = log_formatter);
+        logging::keywords::format = log_formatter, logging::keywords::auto_flush = true);
 
     logging::add_console_log(std::cout, logging::keywords::format = log_formatter);
 
