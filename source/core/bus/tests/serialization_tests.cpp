@@ -9,9 +9,14 @@ class SerializableClass {
     SerializableClass() = default;
     SerializableClass(int x, const std::string& s) : x{x}, s{s} {}
 
+    int X() const { return x; };
+    std::string S() const { return s; };
+
+   private:
     int x;
     std::string s;
 
+   public:
     MSGPACK_DEFINE(x, s);
 };
 
@@ -28,6 +33,6 @@ TEST(SerializationTests, CustomClassRoundTrip) {
     const auto buf = Serialize(stc);
     const auto deserialized = Deserialize<SerializableClass>(buf);
 
-    EXPECT_EQ(stc.x, deserialized.x);
-    EXPECT_EQ(stc.s, deserialized.s);
+    EXPECT_EQ(stc.X(), deserialized.X());
+    EXPECT_EQ(stc.S(), deserialized.S());
 }
