@@ -36,6 +36,14 @@ new_git_repository(
     shallow_since = "1575956176 +0900",
 )
 
+new_git_repository(
+    name = "cppzmq",
+    build_file = "@//third_party:cppzmq.BUILD",
+    commit = "4bd01bc0ef6af2e78f0fb9f9b21c99143383a74e",
+    remote = "https://github.com/zeromq/cppzmq",
+    shallow_since = "1580207850 +0000",
+)
+
 git_repository(
     name = "googletest",
     remote = "https://github.com/google/googletest",
