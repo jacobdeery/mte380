@@ -20,10 +20,5 @@ T Deserialize(const msgpack::sbuffer& buf) {
     return obj.convert(gen_obj);
 }
 
-msgpack::object Unpack(const msgpack::sbuffer& sbuf) {
-    msgpack::object_handle oh = msgpack::unpack(sbuf.data(), sbuf.size());
-    return oh.get();
-}
-
 }  // namespace bus
 }  // namespace mte
