@@ -3,7 +3,10 @@ package(default_visibility = ["//visibility:public"])
 cc_binary(
     name = "main",
     srcs = ["main.cpp"],
-    deps = [":logging"],
+    deps = [
+        ":logging",
+        "//source/core/bus",
+    ],
 )
 
 cc_library(
