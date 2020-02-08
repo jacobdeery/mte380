@@ -37,11 +37,11 @@ new_git_repository(
 )
 
 new_git_repository(
-    name = "cppzmq",
-    build_file = "@//third_party:cppzmq.BUILD",
-    commit = "4bd01bc0ef6af2e78f0fb9f9b21c99143383a74e",
-    remote = "https://github.com/zeromq/cppzmq",
-    shallow_since = "1580207850 +0000",
+    name = "zmqpp",
+    build_file = "@//third_party:zmqpp.BUILD",
+    commit = "7f099a8dba534661c69db32e31e13f06f34ad6bc",
+    remote = "https://github.com/zeromq/zmqpp",
+    shallow_since = "1578644481 +0000",
 )
 
 git_repository(

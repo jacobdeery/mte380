@@ -4,9 +4,10 @@ cc_library(
     name = "bus",
     srcs = ["bus.cpp"],
     hdrs = ["bus.h"],
+    linkopts = ["-lzmq"],
     deps = [
         ":serialization",
-        "@cppzmq",
+        "@zmqpp",
     ],
 )
 
