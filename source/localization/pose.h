@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Eigen/Core>
-
 #include "source/core/bus/serialization.h"
 #include "source/core/logging.h"
+
+#include <Eigen/Core>
 
 namespace mte {
 namespace localization {

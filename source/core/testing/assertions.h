@@ -1,8 +1,8 @@
 #pragma once
 
-#include <gtest/gtest.h>
-
 #include "source/localization/pose.h"
+
+#include <gtest/gtest.h>
 
 namespace mte {
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdexcept>
-
 #include "boost/log/trivial.hpp"
+
+#include <stdexcept>
 
 #define LOG_INFO(msg) BOOST_LOG_TRIVIAL(info) << msg
 #define LOG_WARN(msg) BOOST_LOG_TRIVIAL(warning) << msg

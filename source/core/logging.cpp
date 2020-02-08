@@ -1,5 +1,4 @@
-#include <iostream>
-#include <locale>
+#include "logging.h"
 
 #include "boost/date_time/posix_time/posix_time_io.hpp"
 #include "boost/date_time/posix_time/posix_time_types.hpp"
@@ -11,7 +10,8 @@
 #include "boost/log/utility/setup/console.hpp"
 #include "boost/log/utility/setup/file.hpp"
 
-#include "logging.h"
+#include <iostream>
+#include <locale>
 
 namespace logging = boost::log;
 

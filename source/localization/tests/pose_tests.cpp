@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-
 #include "source/core/testing/assertions.h"
 #include "source/localization/pose.h"
+
+#include <gtest/gtest.h>
 
 using namespace mte;
 
