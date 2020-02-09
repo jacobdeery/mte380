@@ -13,7 +13,7 @@ struct Pose {
     Pose(const Eigen::Vector3d& position, const Eigen::Vector3d& velocity,
          const Eigen::Vector3d& orientation, const Eigen::Vector3d& angular_velocity);
 
-    Eigen::Vector3d Position() { return {x, y, z}; };
+    Eigen::Vector3d Position() const { return {x, y, z}; };
 
     double x = 0;
     double y = 0;

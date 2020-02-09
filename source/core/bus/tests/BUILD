@@ -21,11 +21,17 @@ cc_test(
 cc_binary(
     name = "sender_demo",
     srcs = ["sender_demo.cpp"],
-    deps = ["//source/core/bus"],
+    deps = [
+        "//source/core/bus",
+        "//source/localization:pose",
+    ],
 )
 
 cc_binary(
     name = "receiver_demo",
     srcs = ["receiver_demo.cpp"],
-    deps = ["//source/core/bus"],
+    deps = [
+        "//source/core/bus",
+        "//source/localization:pose",
+    ],
 )
