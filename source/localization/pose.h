@@ -1,19 +1,18 @@
 #pragma once
 
 #include "source/core/bus/serialization.h"
+#include "source/core/geometry.h"
 #include "source/core/logging.h"
-
-#include <Eigen/Core>
 
 namespace mte {
 namespace localization {
 
 struct Pose {
     Pose() = default;
-    Pose(const Eigen::Vector3d& position, const Eigen::Vector3d& velocity,
-         const Eigen::Vector3d& orientation, const Eigen::Vector3d& angular_velocity);
+    Pose(const geometry::Vector3d& position, const geometry::Vector3d& velocity,
+         const geometry::Vector3d& orientation, const geometry::Vector3d& angular_velocity);
 
-    Eigen::Vector3d Position() const { return {x, y, z}; };
+    geometry::Vector3d Position() const { return {x, y, z}; };
 
     double x = 0;
     double y = 0;

@@ -19,3 +19,9 @@ cc_library(
         "@boost//:log",
     ],
 )
+
+cc_library(
+    name = "geometry",
+    hdrs = ["geometry.h"],
+    deps = ["@eigen"],
+)
