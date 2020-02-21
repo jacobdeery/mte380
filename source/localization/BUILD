@@ -5,8 +5,8 @@ cc_library(
     srcs = ["pose.cpp"],
     hdrs = ["pose.h"],
     deps = [
-        "//source/core:geometry",
         "//source/core:logging",
         "//source/core/bus:serialization",
+        "//source/core/geometry",
     ],
 )

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "source/core/bus/serialization.h"
-#include "source/core/geometry.h"
+#include "source/core/geometry/geometry.h"
 #include "source/core/logging.h"
 
 namespace mte {

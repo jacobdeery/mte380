@@ -1,5 +1,6 @@
 #pragma once
 
+#include "source/core/geometry/geometry.h"
 #include "source/localization/pose.h"
 
 #include <gtest/gtest.h>
@@ -19,6 +20,44 @@ void Expect_Pose_Eq(const localization::Pose& p1, const localization::Pose& p2) 
     EXPECT_DOUBLE_EQ(p1.roll_rate, p2.roll_rate);
     EXPECT_DOUBLE_EQ(p1.pitch_rate, p2.pitch_rate);
     EXPECT_DOUBLE_EQ(p1.yaw_rate, p2.yaw_rate);
+}
+
+void Expect_Vector3d_Equal(const geometry::Vector3d& v1, const geometry::Vector3d& v2) {
+    EXPECT_DOUBLE_EQ(v1[0], v2[0]);
+    EXPECT_DOUBLE_EQ(v1[1], v2[1]);
+    EXPECT_DOUBLE_EQ(v1[2], v2[2]);
+}
+
+void Expect_Vector3d_Near(const geometry::Vector3d& v1, const geometry::Vector3d& v2, double eps) {
+    EXPECT_NEAR(v1[0], v2[0], eps);
+    EXPECT_NEAR(v1[1], v2[1], eps);
+    EXPECT_NEAR(v1[2], v2[2], eps);
+}
+
+template <class MatrixType>
+void Expect_Matrix_Equal(const MatrixType& m1, const MatrixType& m2) {
+    ASSERT_EQ(m1.rows(), m2.rows());
+    ASSERT_EQ(m1.cols(), m2.cols());
+    for (int i = 0; i < m1.rows(); ++i) {
+        for (int j = 0; i < m1.cols(); ++i) {
+            EXPECT_DOUBLE_EQ(m1(i, j), m2(i, j))
+                << "M1(" << i << "," << j << ") is " << m1(i, j) << "and M2(" << i << "," << j
+                << ") is " << m2(i, j);
+        }
+    }
+}
+
+template <class MatrixType>
+void Expect_Matrix_Near(const MatrixType& m1, const MatrixType& m2, double eps) {
+    ASSERT_EQ(m1.rows(), m2.rows());
+    ASSERT_EQ(m1.cols(), m2.cols());
+    for (int i = 0; i < m1.rows(); ++i) {
+        for (int j = 0; i < m1.cols(); ++i) {
+            EXPECT_NEAR(m1(i, j), m2(i, j), eps)
+                << "M1(" << i << "," << j << ") is " << m1(i, j) << "and M2(" << i << "," << j
+                << ") is " << m2(i, j);
+        }
+    }
 }
 
 }  // namespace mte
