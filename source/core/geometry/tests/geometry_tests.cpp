@@ -86,7 +86,64 @@ TEST(TransformTests, InvalidAngleThrows) {
     EXPECT_ANY_THROW(TransformFromYPR(0, 0, -M_PI - kEps));
 }
 
-TEST(TransformTests, RotationMatrixEquivalency) {
+TEST(TransformTests, RotationMatrixEquivalencyYawOnly) {
+    const double yaw = M_PI - 0.1;
+
+    const double cy = cos(yaw);
+    const double sy = sin(yaw);
+
+    const Transform3d tf = TransformFromYPR(yaw, 0, 0);
+
+    // clang-format off
+    const Eigen::Matrix3d rotation_mat{
+        { cy,  -sy,  0},
+        { sy,  cy,   0},
+        { 0,   0,    1}
+    };
+    //clang-format on
+
+    mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
+}
+
+TEST(TransformTests, RotationMatrixEquivalencyPitchOnly) {
+    const double pitch = M_PI_2 - 0.1;
+
+    const double cp = cos(pitch);
+    const double sp = sin(pitch);
+
+    const Transform3d tf = TransformFromYPR(0, pitch, 0);
+
+    // clang-format off
+    const Eigen::Matrix3d rotation_mat{
+        { cp,   0,  sp},
+        { 0,    1,  0},
+        { -sp,  0,  cp}
+    };
+    //clang-format on
+
+    mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
+}
+
+TEST(TransformTests, RotationMatrixEquivalencyRollOnly) {
+    const double roll = M_PI - 0.1;
+
+    const double cr = cos(roll);
+    const double sr = sin(roll);
+
+    const Transform3d tf = TransformFromYPR(0, 0, roll);
+
+    // clang-format off
+    const Eigen::Matrix3d rotation_mat{
+        { 1,  0,   0},
+        { 0,  cr,  -sr},
+        { 0,  sr,  cr}
+    };
+    //clang-format on
+
+    mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
+}
+
+TEST(TransformTests, RotationMatrixEquivalencyMultipleAxes) {
     const double yaw = M_PI - 0.1;
     const double pitch = M_PI_2 - 0.1;
     const double roll = M_PI / 3.0;
@@ -134,31 +191,30 @@ TEST(TransformTests, RotationPlusTranslation) {
     mte::Expect_Matrix_Near(transformed_p1, tf * p1, kEps);
 }
 
-TEST(TransformTests, YPRRoundTrip) {
-    {
-        const double yaw = M_PI - 0.1;
-        const double pitch = M_PI_2 - 0.1;
-        const double roll = M_PI - 0.1;
+TEST(TransformTests, YPRRoundTripPositive) {
+    const double yaw = M_PI - 0.1;
+    const double pitch = M_PI_2 - 0.1;
+    const double roll = M_PI - 0.1;
 
-        const Transform3d tf = TransformFromYPR(yaw, pitch, roll);
-        const auto [yaw2, pitch2, roll2] = YPRFromTransform(tf);
+    const Transform3d tf = TransformFromYPR(yaw, pitch, roll);
+    const auto [yaw2, pitch2, roll2] = YPRFromTransform(tf);
 
-        EXPECT_NEAR(yaw, yaw2, kAngleEps);
-        EXPECT_NEAR(pitch, pitch2, kAngleEps);
-        EXPECT_NEAR(roll, roll2, kAngleEps);
-    }
-    {
-        const double yaw = -M_PI + 0.1;
-        const double pitch = -M_PI_2 + 0.1;
-        const double roll = -M_PI + 0.1;
+    EXPECT_NEAR(yaw, yaw2, kAngleEps);
+    EXPECT_NEAR(pitch, pitch2, kAngleEps);
+    EXPECT_NEAR(roll, roll2, kAngleEps);
+}
 
-        const Transform3d tf = TransformFromYPR(yaw, pitch, roll);
-        const auto [yaw2, pitch2, roll2] = YPRFromTransform(tf);
+TEST(TransformTests, YPRRoundTripNegative) {
+    const double yaw = -M_PI + 0.1;
+    const double pitch = -M_PI_2 + 0.1;
+    const double roll = -M_PI + 0.1;
 
-        EXPECT_NEAR(yaw, yaw2, kAngleEps);
-        EXPECT_NEAR(pitch, pitch2, kAngleEps);
-        EXPECT_NEAR(roll, roll2, kAngleEps);
-    }
+    const Transform3d tf = TransformFromYPR(yaw, pitch, roll);
+    const auto [yaw2, pitch2, roll2] = YPRFromTransform(tf);
+
+    EXPECT_NEAR(yaw, yaw2, kAngleEps);
+    EXPECT_NEAR(pitch, pitch2, kAngleEps);
+    EXPECT_NEAR(roll, roll2, kAngleEps);
 }
 
 TEST(TransformTests, YPRRoundTripGimbalLock) {

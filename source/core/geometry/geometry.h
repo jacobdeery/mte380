@@ -8,6 +8,7 @@
 namespace mte {
 namespace geometry {
 
+using Eigen::Matrix3d;
 using Eigen::Vector3d;
 typedef Eigen::Vector3d Point3d;
 
