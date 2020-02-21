@@ -22,18 +22,6 @@ void Expect_Pose_Eq(const localization::Pose& p1, const localization::Pose& p2) 
     EXPECT_DOUBLE_EQ(p1.yaw_rate, p2.yaw_rate);
 }
 
-void Expect_Vector3d_Equal(const geometry::Vector3d& v1, const geometry::Vector3d& v2) {
-    EXPECT_DOUBLE_EQ(v1[0], v2[0]);
-    EXPECT_DOUBLE_EQ(v1[1], v2[1]);
-    EXPECT_DOUBLE_EQ(v1[2], v2[2]);
-}
-
-void Expect_Vector3d_Near(const geometry::Vector3d& v1, const geometry::Vector3d& v2, double eps) {
-    EXPECT_NEAR(v1[0], v2[0], eps);
-    EXPECT_NEAR(v1[1], v2[1], eps);
-    EXPECT_NEAR(v1[2], v2[2], eps);
-}
-
 template <class MatrixType>
 void Expect_Matrix_Equal(const MatrixType& m1, const MatrixType& m2) {
     ASSERT_EQ(m1.rows(), m2.rows());
