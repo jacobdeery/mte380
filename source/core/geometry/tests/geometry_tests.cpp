@@ -86,7 +86,7 @@ TEST(TransformTests, InvalidAngleThrows) {
     EXPECT_ANY_THROW(TransformFromYPR(0, 0, -M_PI - kEps));
 }
 
-TEST(TransformTests, RotationMatrixEquivalencyYawOnly) {
+TEST(TransformTests, RotationMatrixEquivalenceYawOnly) {
     const double yaw = M_PI - 0.1;
 
     const double cy = cos(yaw);
@@ -105,7 +105,7 @@ TEST(TransformTests, RotationMatrixEquivalencyYawOnly) {
     mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
 }
 
-TEST(TransformTests, RotationMatrixEquivalencyPitchOnly) {
+TEST(TransformTests, RotationMatrixEquivalencePitchOnly) {
     const double pitch = M_PI_2 - 0.1;
 
     const double cp = cos(pitch);
@@ -124,7 +124,7 @@ TEST(TransformTests, RotationMatrixEquivalencyPitchOnly) {
     mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
 }
 
-TEST(TransformTests, RotationMatrixEquivalencyRollOnly) {
+TEST(TransformTests, RotationMatrixEquivalenceRollOnly) {
     const double roll = M_PI - 0.1;
 
     const double cr = cos(roll);
@@ -143,7 +143,7 @@ TEST(TransformTests, RotationMatrixEquivalencyRollOnly) {
     mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
 }
 
-TEST(TransformTests, RotationMatrixEquivalencyMultipleAxes) {
+TEST(TransformTests, RotationMatrixEquivalenceMultipleAxes) {
     const double yaw = M_PI - 0.1;
     const double pitch = M_PI_2 - 0.1;
     const double roll = M_PI / 3.0;
