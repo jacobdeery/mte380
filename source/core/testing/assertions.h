@@ -23,27 +23,25 @@ void Expect_Pose_Eq(const localization::Pose& p1, const localization::Pose& p2) 
 }
 
 template <class MatrixType>
-void Expect_Matrix_Equal(const MatrixType& m1, const MatrixType& m2) {
+void ExpectMatrixEqual(const MatrixType& m1, const MatrixType& m2) {
     ASSERT_EQ(m1.rows(), m2.rows());
     ASSERT_EQ(m1.cols(), m2.cols());
     for (int i = 0; i < m1.rows(); ++i) {
-        for (int j = 0; i < m1.cols(); ++i) {
+        for (int j = 0; j < m1.cols(); ++j) {
             EXPECT_DOUBLE_EQ(m1(i, j), m2(i, j))
-                << "M1(" << i << "," << j << ") is " << m1(i, j) << "and M2(" << i << "," << j
-                << ") is " << m2(i, j);
+                << "at i=" + std::to_string(i) + ", j=" + std::to_string(j);
         }
     }
 }
 
 template <class MatrixType>
-void Expect_Matrix_Near(const MatrixType& m1, const MatrixType& m2, double eps) {
+void ExpectMatrixNear(const MatrixType& m1, const MatrixType& m2, double eps) {
     ASSERT_EQ(m1.rows(), m2.rows());
     ASSERT_EQ(m1.cols(), m2.cols());
     for (int i = 0; i < m1.rows(); ++i) {
-        for (int j = 0; i < m1.cols(); ++i) {
+        for (int j = 0; j < m1.cols(); ++j) {
             EXPECT_NEAR(m1(i, j), m2(i, j), eps)
-                << "M1(" << i << "," << j << ") is " << m1(i, j) << "and M2(" << i << "," << j
-                << ") is " << m2(i, j);
+                << "at i=" + std::to_string(i) + ", j=" + std::to_string(j);
         }
     }
 }

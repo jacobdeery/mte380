@@ -218,7 +218,7 @@ double IcpPointToPlane::fitStep(double *T, const int32_t T_num, Matrix &R, Matri
         }
 
         // solve linear least squares
-#if 1
+#if 0
         // use the normal equations
         Matrix A_ = ~A * A;
         Matrix b_ = ~A * b;

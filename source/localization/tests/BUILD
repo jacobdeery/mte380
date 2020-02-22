@@ -9,3 +9,13 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "lidar_localization_tests",
+    srcs = ["lidar_localization_tests.cpp"],
+    deps = [
+        "//source/core/testing:testing_utils",
+        "//source/localization:icp",
+        "@googletest//:gtest_main",
+    ],
+)

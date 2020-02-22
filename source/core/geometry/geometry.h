@@ -9,6 +9,7 @@ namespace mte {
 namespace geometry {
 
 using Eigen::Matrix3d;
+using Eigen::MatrixXd;
 using Eigen::Vector3d;
 typedef Eigen::Vector3d Point3d;
 
@@ -20,6 +21,12 @@ using Eigen::Translation3d;
 
 Transform3d TransformFromYPR(double yaw, double pitch, double roll);
 std::tuple<double, double, double> YPRFromTransform(const Transform3d& tf);
+
+template <class MatrixType>
+std::vector<double> Unravel(const MatrixType& mat) {
+    const Eigen::VectorXd v = mat.template reshaped<Eigen::RowMajor>();
+    return std::vector<double>{v.begin(), v.end()};
+}
 
 }  // namespace geometry
 }  // namespace mte

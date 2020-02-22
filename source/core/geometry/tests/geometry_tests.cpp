@@ -14,7 +14,7 @@ TEST(TransformTests, IdentityTransform) {
     const Point3d p1{1.0, 2.0, 3.0};
     const Transform3d id = Transform3d::Identity();
 
-    mte::Expect_Matrix_Equal(p1, id * p1);
+    mte::ExpectMatrixEqual(p1, id * p1);
 }
 
 TEST(TransformTests, PureTranslation) {
@@ -23,7 +23,7 @@ TEST(TransformTests, PureTranslation) {
 
     const Transform3d translation{Translation3d{1.0, 1.0, 1.0}};
 
-    mte::Expect_Matrix_Near(transformed_p1, translation * p1, kEps);
+    mte::ExpectMatrixNear(transformed_p1, translation * p1, kEps);
 }
 
 TEST(TransformTests, ComposeTranslations) {
@@ -35,7 +35,7 @@ TEST(TransformTests, ComposeTranslations) {
 
     const Transform3d composed = translation_1 * translation_2;
 
-    mte::Expect_Matrix_Near(transformed_p1, composed * p1, kEps);
+    mte::ExpectMatrixNear(transformed_p1, composed * p1, kEps);
 }
 
 TEST(TransformTests, InvertTranslation) {
@@ -44,7 +44,7 @@ TEST(TransformTests, InvertTranslation) {
     const Transform3d translation{Translation3d{1.0, 1.0, 1.0}};
     const Transform3d inv_translation = translation.inverse();
 
-    mte::Expect_Matrix_Near(p1, inv_translation * translation * p1, kEps);
+    mte::ExpectMatrixNear(p1, inv_translation * translation * p1, kEps);
 }
 
 TEST(TransformTests, RotationInOneAxis) {
@@ -59,9 +59,9 @@ TEST(TransformTests, RotationInOneAxis) {
     const Transform3d roll_only = TransformFromYPR(0, 0, M_PI_2);
     const Point3d rolled_p1{1.0, -3.0, 2.0};
 
-    mte::Expect_Matrix_Near(yawed_p1, yaw_only * p1, kEps);
-    mte::Expect_Matrix_Near(pitched_p1, pitch_only * p1, kEps);
-    mte::Expect_Matrix_Near(rolled_p1, roll_only * p1, kEps);
+    mte::ExpectMatrixNear(yawed_p1, yaw_only * p1, kEps);
+    mte::ExpectMatrixNear(pitched_p1, pitch_only * p1, kEps);
+    mte::ExpectMatrixNear(rolled_p1, roll_only * p1, kEps);
 }
 
 TEST(TransformTests, RotationInMultipleAxes) {
@@ -74,7 +74,7 @@ TEST(TransformTests, RotationInMultipleAxes) {
     const double final_z = 3.0 * sqrt(2.0) / 2.0;
     const Point3d transformed_p1{final_x, final_y, final_z};
 
-    mte::Expect_Matrix_Near(transformed_p1, ypr * p1, kEps);
+    mte::ExpectMatrixNear(transformed_p1, ypr * p1, kEps);
 }
 
 TEST(TransformTests, InvalidAngleThrows) {
@@ -102,7 +102,7 @@ TEST(TransformTests, RotationMatrixEquivalenceYawOnly) {
     };
     //clang-format on
 
-    mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
+    mte::ExpectMatrixNear(rotation_mat, Matrix3d{tf.rotation()}, kEps);
 }
 
 TEST(TransformTests, RotationMatrixEquivalencePitchOnly) {
@@ -121,7 +121,7 @@ TEST(TransformTests, RotationMatrixEquivalencePitchOnly) {
     };
     //clang-format on
 
-    mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
+    mte::ExpectMatrixNear(rotation_mat, Matrix3d{tf.rotation()}, kEps);
 }
 
 TEST(TransformTests, RotationMatrixEquivalenceRollOnly) {
@@ -140,7 +140,7 @@ TEST(TransformTests, RotationMatrixEquivalenceRollOnly) {
     };
     //clang-format on
 
-    mte::Expect_Matrix_Near(rotation_mat, Matrix3d{tf.rotation()}, kEps);
+    mte::ExpectMatrixNear(rotation_mat, Matrix3d{tf.rotation()}, kEps);
 }
 
 TEST(TransformTests, RotationMatrixEquivalenceMultipleAxes) {
@@ -170,8 +170,8 @@ TEST(TransformTests, RotationMatrixEquivalenceMultipleAxes) {
     };
     // clang-format on
 
-    mte::Expect_Matrix_Near(ypr.matrix(), (tf_roll * tf_pitch * tf_yaw).matrix(), kEps);
-    mte::Expect_Matrix_Near(rotation_mat, ypr.matrix(), kEps);
+    mte::ExpectMatrixNear(ypr.matrix(), (tf_roll * tf_pitch * tf_yaw).matrix(), kEps);
+    mte::ExpectMatrixNear(rotation_mat, ypr.matrix(), kEps);
 }
 
 TEST(TransformTests, RotationPlusTranslation) {
@@ -186,9 +186,9 @@ TEST(TransformTests, RotationPlusTranslation) {
     const double final_z = 3.0 * sqrt(2.0) / 2.0 + 3.0;
     const Point3d transformed_p1{final_x, final_y, final_z};
 
-    mte::Expect_Matrix_Equal(translation.translation().matrix(), tf.translation().matrix());
+    mte::ExpectMatrixEqual(translation.translation().matrix(), tf.translation().matrix());
     EXPECT_EQ(rotation.rotation().matrix(), tf.rotation().matrix());
-    mte::Expect_Matrix_Near(transformed_p1, tf * p1, kEps);
+    mte::ExpectMatrixNear(transformed_p1, tf * p1, kEps);
 }
 
 TEST(TransformTests, YPRRoundTripPositive) {
@@ -238,4 +238,18 @@ TEST(TransformTests, YPRRoundTripGimbalLock) {
         EXPECT_NEAR(pitch, pitch2, kAngleEps);
         EXPECT_NEAR(roll - yaw, roll2, kAngleEps);
     }
+}
+
+TEST(GeometryTests, UnravelTest) {
+    const std::vector<double> vec{1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    // clang-format off
+    const Matrix3d geo_mat{
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    // clang-format on
+
+    EXPECT_EQ(vec, Unravel(geo_mat));
 }

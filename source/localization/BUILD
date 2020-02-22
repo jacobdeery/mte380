@@ -10,3 +10,14 @@ cc_library(
         "//source/core/geometry",
     ],
 )
+
+cc_library(
+    name = "icp",
+    srcs = ["icp.cpp"],
+    hdrs = ["icp.h"],
+    deps = [
+        "//source/core:logging",
+        "//source/core/geometry",
+        "//third_party/libicp",
+    ],
+)
