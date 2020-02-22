@@ -36,22 +36,20 @@ new_git_repository(
     shallow_since = "1575956176 +0900",
 )
 
+http_archive(
+    name = "zeromq",
+    build_file = "@//third_party/zeromq:zeromq.BUILD",
+    sha256 = "02ecc88466ae38cf2c8d79f09cfd2675ba299a439680b64ade733e26a349edeb",
+    strip_prefix = "libzmq-4.3.2",
+    urls = ["https://github.com/zeromq/libzmq/archive/v4.3.2.tar.gz"],
+)
+
 new_git_repository(
     name = "zmqpp",
     build_file = "@//third_party:zmqpp.BUILD",
     commit = "7f099a8dba534661c69db32e31e13f06f34ad6bc",
     remote = "https://github.com/zeromq/zmqpp",
     shallow_since = "1578644481 +0000",
-)
-
-http_archive(
-    name = "zeromq",
-    build_file = "@//third_party/zeromq:zeromq.BUILD",
-    patch_tool = "patch",
-    patches = ["@//third_party/zeromq:zeromq_platform_hpp.patch"],
-    sha256 = "02ecc88466ae38cf2c8d79f09cfd2675ba299a439680b64ade733e26a349edeb",
-    strip_prefix = "libzmq-4.3.2",
-    urls = ["https://github.com/zeromq/libzmq/archive/v4.3.2.tar.gz"],
 )
 
 git_repository(
