@@ -94,3 +94,7 @@ This library was modified as follows for integration in the MTE 380 project:
 - The Boost header inclusions in kdtree.h were changed from system headers (angle brackets) to
 standard inclusions (double quotation marks)
 - The build system was changed from CMake to Bazel
+- The `exit(0)` lines on errors in matrix.cpp were changed to `exit(1)` to reflect the universal
+convention that an exit code of 0 indicates success
+- IcpPointToPlane was changed to use SVD instead of the "normal equations" due to numerical errors
+encountered during testing (icpPointToPlane.cpp#221: `#if 1` changed to `#if 0`)

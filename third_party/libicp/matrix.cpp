@@ -93,7 +93,7 @@ Matrix Matrix::getMat(int32_t i1, int32_t j1, int32_t i2, int32_t j2) {
         cerr << "ERROR: Cannot get submatrix [" << i1 << ".." << i2 << "] x [" << j1 << ".." << j2
              << "]"
              << " of a (" << m << "x" << n << ") matrix." << endl;
-        exit(0);
+        exit(1);
     }
     Matrix M(i2 - i1 + 1, j2 - j1 + 1);
     for (int32_t i = 0; i < M.m; i++)
@@ -106,7 +106,7 @@ void Matrix::setMat(const Matrix &M, const int32_t i1, const int32_t j1) {
         cerr << "ERROR: Cannot set submatrix [" << i1 << ".." << i1 + M.m - 1 << "] x [" << j1
              << ".." << j1 + M.n - 1 << "]"
              << " of a (" << m << "x" << n << ") matrix." << endl;
-        exit(0);
+        exit(1);
     }
     for (int32_t i = 0; i < M.m; i++)
         for (int32_t j = 0; j < M.n; j++) val[i1 + i][j1 + j] = M.val[i][j];
@@ -117,7 +117,7 @@ void Matrix::setVal(FLOAT s, int32_t i1, int32_t j1, int32_t i2, int32_t j2) {
     if (j2 == -1) j2 = n - 1;
     if (i2 < i1 || j2 < j1) {
         cerr << "ERROR in setVal: Indices must be ordered (i1<=i2, j1<=j2)." << endl;
-        exit(0);
+        exit(1);
     }
     for (int32_t i = i1; i <= i2; i++)
         for (int32_t j = j1; j <= j2; j++) val[i][j] = s;
@@ -171,14 +171,14 @@ Matrix Matrix::diag(const Matrix &M) {
     }
     cout << "ERROR: Trying to create diagonal matrix from vector of size (" << M.m << "x" << M.n
          << ")" << endl;
-    exit(0);
+    exit(1);
 }
 
 Matrix Matrix::reshape(const Matrix &M, int32_t m_, int32_t n_) {
     if (M.m * M.n != m_ * n_) {
         cerr << "ERROR: Trying to reshape a matrix of size (" << M.m << "x" << M.n << ") to size ("
              << m_ << "x" << n_ << ")" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix M2(m_, n_);
     for (int32_t k = 0; k < m_ * n_; k++) {
@@ -233,7 +233,7 @@ Matrix Matrix::operator+(const Matrix &M) {
     if (A.m != B.m || A.n != B.n) {
         cerr << "ERROR: Trying to add matrices of size (" << A.m << "x" << A.n << ") and (" << B.m
              << "x" << B.n << ")" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix C(A.m, A.n);
     for (int32_t i = 0; i < m; i++)
@@ -247,7 +247,7 @@ Matrix Matrix::operator-(const Matrix &M) {
     if (A.m != B.m || A.n != B.n) {
         cerr << "ERROR: Trying to subtract matrices of size (" << A.m << "x" << A.n << ") and ("
              << B.m << "x" << B.n << ")" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix C(A.m, A.n);
     for (int32_t i = 0; i < m; i++)
@@ -261,7 +261,7 @@ Matrix Matrix::operator*(const Matrix &M) {
     if (A.n != B.m) {
         cerr << "ERROR: Trying to multiply matrices of size (" << A.m << "x" << A.n << ") and ("
              << B.m << "x" << B.n << ")" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix C(A.m, B.n);
     for (int32_t i = 0; i < A.m; i++)
@@ -305,14 +305,14 @@ Matrix Matrix::operator/(const Matrix &M) {
     } else {
         cerr << "ERROR: Trying to divide matrices of size (" << A.m << "x" << A.n << ") and ("
              << B.m << "x" << B.n << ")" << endl;
-        exit(0);
+        exit(1);
     }
 }
 
 Matrix Matrix::operator/(const FLOAT &s) {
     if (fabs(s) < 1e-20) {
         cerr << "ERROR: Trying to divide by zero!" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix C(m, n);
     for (int32_t i = 0; i < m; i++)
@@ -351,7 +351,7 @@ FLOAT Matrix::mean() {
 Matrix Matrix::cross(const Matrix &a, const Matrix &b) {
     if (a.m != 3 || a.n != 1 || b.m != 3 || b.n != 1) {
         cerr << "ERROR: Cross product vectors must be of size (3x1)" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix c(3, 1);
     c.val[0][0] = a.val[1][0] * b.val[2][0] - a.val[2][0] * b.val[1][0];
@@ -363,7 +363,7 @@ Matrix Matrix::cross(const Matrix &a, const Matrix &b) {
 Matrix Matrix::inv(const Matrix &M) {
     if (M.m != M.n) {
         cerr << "ERROR: Trying to invert matrix of size (" << M.m << "x" << M.n << ")" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix A(M);
     Matrix B = eye(M.m);
@@ -374,7 +374,7 @@ Matrix Matrix::inv(const Matrix &M) {
 bool Matrix::inv() {
     if (m != n) {
         cerr << "ERROR: Trying to invert matrix of size (" << m << "x" << n << ")" << endl;
-        exit(0);
+        exit(1);
     }
     Matrix A(*this);
     eye();
@@ -386,7 +386,7 @@ FLOAT Matrix::det() {
     if (m != n) {
         cerr << "ERROR: Trying to compute determinant of a matrix of size (" << m << "x" << n << ")"
              << endl;
-        exit(0);
+        exit(1);
     }
 
     Matrix A(*this);
@@ -406,7 +406,7 @@ bool Matrix::solve(const Matrix &M, FLOAT eps) {
     if (A.m != A.n || A.m != B.m || A.m < 1 || B.n < 1) {
         cerr << "ERROR: Trying to eliminate matrices of size (" << A.m << "x" << A.n << ") and ("
              << B.m << "x" << B.n << ")" << endl;
-        exit(0);
+        exit(1);
     }
 
     // index vectors for bookkeeping on the pivoting
@@ -495,7 +495,7 @@ bool Matrix::solve(const Matrix &M, FLOAT eps) {
 bool Matrix::lu(int32_t *idx, FLOAT &d, FLOAT eps) {
     if (m != n) {
         cerr << "ERROR: Trying to LU decompose a matrix of size (" << m << "x" << n << ")" << endl;
-        exit(0);
+        exit(1);
     }
 
     int32_t i, imax, j, k;
