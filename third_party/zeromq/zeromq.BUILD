@@ -1,3 +1,5 @@
+# BUILD file adapted from https://github.com/iotaledger/rules_iota/blob/master/build/BUILD.libzmq
+
 genrule(
     name = "platform_hpp",
     srcs = [
@@ -18,17 +20,31 @@ config_setting(
     ],
 )
 
+# NOTE: we make this a standalone library so we can compile it with -fpermissive (we don't want to
+# use that flag for the rest of libzmq).
+cc_library(
+    name = "tweetnacl",
+    srcs = [
+        "src/tweetnacl.c",
+    ],
+    hdrs = [
+        "src/tweetnacl.h",
+        ":platform_hpp",
+    ],
+    copts = [
+        "-fpermissive",
+    ],
+)
+
 cc_library(
     name = "zeromq",
     srcs = glob([
-        "src/tweetnacl.c",
         "src/*.cpp",
         "src/*.hpp",
     ]),
     hdrs = [
         "include/zmq.h",
         "include/zmq_utils.h",
-        "src/tweetnacl.h",
         "src/zmq_draft.h",
         ":platform_hpp",
     ],
@@ -39,4 +55,5 @@ cc_library(
     visibility = [
         "//visibility:public",
     ],
+    deps = [":tweetnacl"],
 )
