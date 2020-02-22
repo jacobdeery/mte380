@@ -2,6 +2,8 @@
 
 #include "msgpack.hpp"
 
+#include <sstream>
+
 namespace mte {
 namespace bus {
 

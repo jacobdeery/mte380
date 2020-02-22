@@ -4,9 +4,9 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_r
 http_archive(
     name = "arm_toolchain",
     build_file = "//toolchains:arm_toolchain.BUILD",
-    sha256 = "51bbaf22a4d3e7a393264c4ef1e45566701c516274dde19c4892c911caa85617",
-    strip_prefix = "gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf",
-    url = "https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf.tar.xz",
+    sha256 = "d4f6480ecaa99e977e3833cc8a8e1263f9eecd1ce2d022bb548a24c4f32670f5",
+    strip_prefix = "gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf",
+    url = "https://developer.arm.com/-/media/Files/downloads/gnu-a/8.3-2019.03/binrel/gcc-arm-8.3-2019.03-x86_64-arm-linux-gnueabihf.tar.xz",
 )
 
 git_repository(
