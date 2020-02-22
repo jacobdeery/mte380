@@ -1,0 +1,3 @@
+bazel-bin/source/core/main
+bazel-bin/source/core/bus/tests/receiver_demo
+bazel-bin/source/core/bus/tests/sender_demo
