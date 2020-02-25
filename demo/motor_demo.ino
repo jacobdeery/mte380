@@ -12,7 +12,7 @@
 #define dir_R 4
 #define dir_L 7
 
-// Motor directions -- TODO: check these are correct
+// Motor directions
 #define forward_L LOW
 #define reverse_L HIGH
 #define forward_R HIGH
@@ -37,15 +37,16 @@ void setup() {
   drive("left", 3000);
   stop(3000);
   drive("reverse", 3000);
+  stop(3000);
 }
 
 void drive(String direction, int duration){
  
   // Set motor directions
-  if (direction == "forward"){
+  if (direction == "reverse"){
     digitalWrite(dir_L, forward_L);
     digitalWrite(dir_R, forward_R);
-  } else if (direction == "reverse"){
+  } else if (direction == "forward"){
     digitalWrite(dir_L, reverse_L);
     digitalWrite(dir_R, reverse_R);
   } else if (direction == "right"){
