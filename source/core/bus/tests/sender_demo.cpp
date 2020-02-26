@@ -8,10 +8,10 @@
 int main() {
     mte::bus::Sender<mte::localization::Pose> pose_sender{"test_channel_1"};
 
-    const Eigen::Vector3d pos{1, 2, 3};
-    const Eigen::Vector3d vel{4, 5, 6};
-    const Eigen::Vector3d ori{7, 8, 9};
-    const Eigen::Vector3d ang{10, 11, 12};
+    const mte::geometry::Vector3d pos{1, 2, 3};
+    const mte::geometry::Vector3d vel{4, 5, 6};
+    const mte::geometry::Vector3d ori{7, 8, 9};
+    const mte::geometry::Vector3d ang{10, 11, 12};
 
     mte::localization::Pose p{pos, vel, ori, ang};
 
