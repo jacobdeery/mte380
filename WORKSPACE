@@ -52,6 +52,16 @@ new_git_repository(
     shallow_since = "1578644481 +0000",
 )
 
+new_git_repository(
+    name = "ydlidar",
+    build_file = "@//third_party/ydlidar:ydlidar.BUILD",
+    commit = "d7cc405b4845347b178def020c43573fcc8af2ec",
+    patch_args = ["-p1"],  # needed for patches made with Git
+    patches = ["@//third_party/ydlidar:ydlidar.patch"],
+    remote = "https://github.com/YDLIDAR/sdk",
+    shallow_since = "1574386903 +0800",
+)
+
 git_repository(
     name = "googletest",
     remote = "https://github.com/google/googletest",
