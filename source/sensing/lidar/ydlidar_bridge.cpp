@@ -3,12 +3,11 @@
 namespace mte {
 namespace lidar {
 
-LidarBridge::LidarBridge() {
-    std::string port = "/dev/ttyUSB0";
-    const int baud = 115200;
+constexpr int baud{115200};
 
+LidarBridge::LidarBridge() {
     std::map<std::string, std::string> lidars = ydlidar::YDlidarDriver::lidarPortList();
-    port = lidars.begin()->second;
+    std::string port = lidars.begin()->second;
 
     laser.setSerialPort(port);
     laser.setSerialBaudrate(baud);
