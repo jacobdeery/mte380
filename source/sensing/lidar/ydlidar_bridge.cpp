@@ -6,8 +6,8 @@ namespace lidar {
 constexpr int baud{115200};
 
 LidarBridge::LidarBridge() {
-    std::map<std::string, std::string> lidars = ydlidar::YDlidarDriver::lidarPortList();
-    std::string port = lidars.begin()->second;
+    const auto lidars = ydlidar::YDlidarDriver::lidarPortList();
+    const auto port = lidars.begin()->second;
 
     laser.setSerialPort(port);
     laser.setSerialBaudrate(baud);
@@ -23,10 +23,10 @@ bool LidarBridge::Initialize() {
 }
 
 std::optional<ydlidar::LaserScan> LidarBridge::Scan() {
-    bool hardError;
+    bool is_hardware_error;
     ydlidar::LaserScan scan;
 
-    if (laser.doProcessSimple(scan, hardError)) {
+    if (laser.doProcessSimple(scan, is_hardware_error)) {
         return scan;
     }
     return std::nullopt;
