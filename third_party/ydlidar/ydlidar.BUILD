@@ -10,6 +10,9 @@ cc_library(
     hdrs = glob([
         "include/*.h",
     ]),
+    copts = [
+        "-fpermissive",
+    ],
     linkopts = [
         "-lpthread",
     ],
