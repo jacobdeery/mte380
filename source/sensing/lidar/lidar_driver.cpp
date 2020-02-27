@@ -16,6 +16,9 @@ int main() {
 
     lidar::LidarBridge lidar_bridge;
 
+    // TODO(jacob): Remove after the demo
+    bus::Sender<char> planner_command_sender("planner_command");
+
     while (!lidar_bridge.Initialize()) {
         LOG_INFO("Unable to initialize the lidar bridge. Retrying in 1 second...");
         std::this_thread::sleep_for(1s);
@@ -26,7 +29,9 @@ int main() {
 
         const auto scan = lidar_bridge.Scan();
         if (scan.has_value()) {
-            LOG_INFO(scan.value().data.size());
+            if (lidar::IsThereAWall(scan.value())) {
+                planner_command_sender.Send('1');
+            }
         } else {
             LOG_WARN("Lidar scan had no value");
         }

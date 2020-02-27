@@ -19,5 +19,7 @@ class LidarBridge {
     ydlidar::CYdLidar laser;
 };
 
+bool IsThereAWall(const ydlidar::LaserScan& scan);
+
 }  // namespace lidar
 }  // namespace mte

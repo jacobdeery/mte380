@@ -16,7 +16,9 @@ std::unordered_map<std::string, std::string> channel_ports = {
     {"lidar_points",          "13000"},
     {"imu_data",              "13001"},
     {"pose",                  "13002"},
-    {"plan",                  "13003"}
+    {"plan",                  "13003"},
+
+    {"planner_command",       "14000"}
     // clang-format on
 };
 

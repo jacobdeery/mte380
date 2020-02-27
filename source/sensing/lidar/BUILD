@@ -4,10 +4,14 @@ cc_library(
     name = "lidar_types",
     srcs = ["lidar_types.cpp"],
     hdrs = ["lidar_types.h"],
+    deps = [
+        "//source/core/geometry",
+        "@eigen",
+    ],
 )
 
 cc_binary(
-    name = "lidar_driver",
+    name = "lidar_driver_main",
     srcs = [
         "lidar_driver.cpp",
         "ydlidar_bridge.cpp",
