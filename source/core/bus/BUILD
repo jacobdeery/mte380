@@ -6,6 +6,7 @@ cc_library(
     hdrs = ["bus.h"],
     deps = [
         ":serialization",
+        "//source/core:logging",
         "@zmqpp",
     ],
 )
