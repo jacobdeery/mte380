@@ -1,0 +1,105 @@
+diff --git a/include/CYdLidar.h b/include/CYdLidar.h
+index b99224a..1862088 100644
+--- a/include/CYdLidar.h
++++ b/include/CYdLidar.h
+@@ -16,8 +16,7 @@
+         return m_##name;\
+ }\
+ 
+-
+-using namespace ydlidar;
++namespace ydlidar {
+ 
+ class YDLIDAR_API CYdLidar {
+   PropertyBuilderByName(float, MaxRange,
+@@ -107,7 +106,7 @@ class YDLIDAR_API CYdLidar {
+  private:
+   bool isScanning;
+   bool isConnected;
+-  YDlidarDriver *lidarPtr;
++  ydlidar::YDlidarDriver *lidarPtr;
+ 
+   uint32_t m_pointTime;
+   uint64_t last_node_time;
+@@ -115,3 +114,4 @@ class YDLIDAR_API CYdLidar {
+ 
+ };	// End of class
+ 
++}
+diff --git a/include/ydlidar_driver.h b/include/ydlidar_driver.h
+index ecedbc7..21b1677 100644
+--- a/include/ydlidar_driver.h
++++ b/include/ydlidar_driver.h
+@@ -13,9 +13,6 @@
+ #endif
+ #endif
+ 
+-using namespace std;
+-using namespace serial;
+-
+ namespace ydlidar {
+ 
+ class YDlidarDriver {
+diff --git a/include/ydlidar_protocol.h b/include/ydlidar_protocol.h
+index 254ad4c..0f0cd92 100644
+--- a/include/ydlidar_protocol.h
++++ b/include/ydlidar_protocol.h
+@@ -12,6 +12,8 @@
+ #pragma pack(1)
+ #endif
+ 
++namespace ydlidar {
++
+ struct node_info {
+   uint8_t    sync_flag;  //sync flag
+   uint16_t   sync_quality;//!信号质量
+@@ -159,3 +161,5 @@ struct LaserScan {
+     return *this;
+   }
+ };
++
++}
+diff --git a/src/lock.c b/src/lock.c
+index e1d5e54..87f4891 100644
+--- a/src/lock.c
++++ b/src/lock.c
+@@ -15,6 +15,7 @@
+ #include <errno.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <fcntl.h>
+ #include <string.h>
+ #include <limits.h>
+diff --git a/src/ydlidar_driver.cpp b/src/ydlidar_driver.cpp
+index 4b1f67d..01825a0 100644
+--- a/src/ydlidar_driver.cpp
++++ b/src/ydlidar_driver.cpp
+@@ -9,7 +9,9 @@
+ #include "ydlidar_driver.h"
+ #include "common.h"
+ #include <math.h>
++
+ using namespace impl;
++using namespace serial;
+ 
+ namespace ydlidar {
+ 
+@@ -68,7 +70,7 @@ YDlidarDriver::~YDlidarDriver() {
+ 
+ result_t YDlidarDriver::connect(const char *port_path, uint32_t baudrate) {
+   m_baudrate  = baudrate;
+-  serial_port = string(port_path);
++  serial_port = std::string(port_path);
+   ScopedLocker lk(_serial_lock);
+ 
+   if (!_serial) {
+@@ -791,7 +793,7 @@ result_t YDlidarDriver::grabScanData(node_info *nodebuffer, size_t &count,
+       }
+ 
+       ScopedLocker l(_lock);
+-      size_t size_to_copy = min(count, scan_node_count);
++      size_t size_to_copy = std::min(count, scan_node_count);
+       memcpy(nodebuffer, scan_node_buf, size_to_copy * sizeof(node_info));
+       count = size_to_copy;
+       scan_node_count = 0;
