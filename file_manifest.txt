@@ -2,3 +2,4 @@ bazel-bin/source/core/main
 bazel-bin/source/core/bus/tests/receiver_demo
 bazel-bin/source/core/bus/tests/sender_demo
 bazel-bin/source/sensing/lidar/lidar_driver_main
+bazel-bin/source/planning/planner_main
