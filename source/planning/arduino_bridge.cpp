@@ -18,7 +18,7 @@ const std::string port_name{"/dev/ttyUSB1"};
 // TODO(jacob/taylor): Tune this based on planner/controller integration testing.
 constexpr auto baud{B9600};
 
-std::optional<std::string> ArduinoBridge::Connect() {
+bool ArduinoBridge::Connect() {
     // Adapted from:
     // blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp
 
@@ -26,7 +26,8 @@ std::optional<std::string> ArduinoBridge::Connect() {
         serial_port = open(port_name.c_str(), O_WRONLY);
         if (serial_port < 0) {
             serial_port = std::nullopt;
-            return strerror(errno);
+            LOG_WARN("Arduino bridge received error message: " + std::string(strerror(errno)));
+            return false;
         }
     }
 
@@ -34,7 +35,8 @@ std::optional<std::string> ArduinoBridge::Connect() {
     memset(&tty, 0, sizeof(tty));
 
     if (tcgetattr(serial_port.value(), &tty) != 0) {
-        return strerror(errno);
+        LOG_WARN("Arduino bridge received error message: " + std::string(strerror(errno)));
+        return false;
     }
 
     tty.c_cflag |= CS8;      // 8 data bits
@@ -50,20 +52,23 @@ std::optional<std::string> ArduinoBridge::Connect() {
     cfsetospeed(&tty, baud);
 
     if (tcsetattr(serial_port.value(), TCSANOW, &tty) != 0) {
-        return strerror(errno);
+        LOG_WARN("Arduino bridge received error message: " + std::string(strerror(errno)));
+        return false;
     }
 
-    return std::nullopt;
+    return true;
 }
 
-std::optional<std::string> ArduinoBridge::Send(const planning::WheelSpeedPlan& plan) const {
+bool ArduinoBridge::Send(const planning::WheelSpeedPlan& plan) const {
     const SerializedPlan serialized_plan{plan};
     if (!serial_port.has_value()) {
-        return "Arduino bridge is not connected";
+        LOG_WARN("Attempted to send a plan but the Arduino bridge is not connected.");
+        return false;
     } else if (write(serial_port.value(), serialized_plan.data, kBytesInSerializedPlan) < 0) {
-        return strerror(errno);
+        LOG_WARN("Arduino bridge received error message: " + std::string(strerror(errno)));
+        return false;
     }
-    return std::nullopt;
+    return true;
 }
 
 ArduinoBridge::~ArduinoBridge() {

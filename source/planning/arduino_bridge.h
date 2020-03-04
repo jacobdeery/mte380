@@ -11,9 +11,9 @@ class ArduinoBridge {
     ArduinoBridge(){};
     ~ArduinoBridge();
 
-    // These functions will return a std::nullopt if no error occurred.
-    std::optional<std::string> Connect();
-    std::optional<std::string> Send(const planning::WheelSpeedPlan& plan) const;
+    // These functions will return true if no error occurred.
+    bool Connect();
+    bool Send(const planning::WheelSpeedPlan& plan) const;
 
    private:
     ArduinoBridge(const ArduinoBridge&) = delete;
