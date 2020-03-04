@@ -5,6 +5,7 @@ cc_test(
     srcs = ["planner_tests.cpp"],
     deps = [
         "//source/core/testing:testing_utils",
+        "//source/planning:arduino_bridge",
         "//source/planning:planner",
         "@googletest//:gtest_main",
     ],

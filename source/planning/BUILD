@@ -3,15 +3,23 @@ package(default_visibility = ["//visibility:public"])
 cc_binary(
     name = "planner_main",
     srcs = [
-        "arduino_bridge.cpp",
-        "arduino_bridge.h",
         "planner_main.cpp",
     ],
     deps = [
+        ":arduino_bridge",
         ":planner",
         "//source/core:logging",
         "//source/core/bus",
         "//source/localization:pose",
+    ],
+)
+
+cc_library(
+    name = "arduino_bridge",
+    srcs = ["arduino_bridge.cpp"],
+    hdrs = ["arduino_bridge.h"],
+    deps = [
+        ":planner",
     ],
 )
 

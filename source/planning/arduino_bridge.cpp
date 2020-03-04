@@ -17,10 +17,6 @@ const std::string port_name{"/dev/ttyUSB1"};
 // TODO(jacob/taylor): Tune this based on planner/controller integration testing.
 constexpr auto baud{B9600};
 
-ArduinoBridge::ArduinoBridge() {
-    memset(&tty, 0, sizeof(tty));
-}
-
 std::optional<std::string> ArduinoBridge::Connect() {
     // Adapted from:
     // blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp
@@ -32,6 +28,9 @@ std::optional<std::string> ArduinoBridge::Connect() {
             return strerror(errno);
         }
     }
+
+    struct termios tty;
+    memset(&tty, 0, sizeof(tty));
 
     if (tcgetattr(serial_port.value(), &tty) != 0) {
         return strerror(errno);
@@ -56,19 +55,29 @@ std::optional<std::string> ArduinoBridge::Connect() {
     return std::nullopt;
 }
 
-std::optional<std::string> ArduinoBridge::Send(char c) const {
+std::optional<std::string> ArduinoBridge::Send(const planning::WheelSpeedPlan& plan) const {
+    const SerializedPlan serialized_plan{plan};
     if (!serial_port.has_value()) {
         return "Arduino bridge is not connected";
-    } else if (write(serial_port.value(), &c, sizeof(c)) < 0) {
+    } else if (write(serial_port.value(), serialized_plan.data, kBytesInSerializedPlan) < 0) {
         return strerror(errno);
-    } else {
-        return std::nullopt;
     }
+    return std::nullopt;
 }
 
 ArduinoBridge::~ArduinoBridge() {
     if (serial_port.has_value()) {
         close(serial_port.value());
+    }
+}
+
+SerializedPlan::SerializedPlan(const planning::WheelSpeedPlan& plan) {
+    for (int i = 0; i < planning::kNumWheelSpeedPoints; ++i) {
+        const float l_float = static_cast<float>(plan.v_l_rpm.data()[i]);
+        memcpy(data + (i * sizeof(float)), &l_float, sizeof(float));
+        const float r_float = static_cast<float>(plan.v_r_rpm.data()[i]);
+        memcpy(data + ((i + planning::kNumWheelSpeedPoints) * sizeof(float)), &r_float,
+               sizeof(float));
     }
 }
 

@@ -37,20 +37,16 @@ int main() {
     LOG_INFO("Connected to Arduino.");
 
     std::this_thread::sleep_for(2s);
-    bridge.Send('3');
 
     while (true) {
         const auto loop_start = std::chrono::system_clock::now();
 
-        const auto command = planner_command_receiver.ReceiveLatest();
-        if (command.has_value()) {
-            const auto write_error_message = bridge.Send(command.value());
-            LOG_INFO("Sending command: " + std::to_string(command.value()));
-            if (write_error_message.has_value()) {
-                LOG_WARN("Arduino bridge failed to send data with error message: " +
-                         write_error_message.value());
-            }
-        }
+        // const auto write_error_message = bridge.Send(command.value());
+
+        // if (write_error_message.has_value()) {
+        //     LOG_WARN("Arduino bridge failed to send data with error message: " +
+        //                 write_error_message.value());
+        // }
 
         std::this_thread::sleep_until(loop_start + kLoopDuration);
     }
