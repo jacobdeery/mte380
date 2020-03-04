@@ -64,6 +64,7 @@ new_git_repository(
 
 git_repository(
     name = "googletest",
+    commit = "703bd9caab50b139428cea1aaff9974ebee5742e",
     remote = "https://github.com/google/googletest",
-    tag = "release-1.10.0",
+    shallow_since = "1570114335 -0400",
 )

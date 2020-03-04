@@ -4,3 +4,4 @@ ColumnLimit: 100
 IndentWidth: 4
 FixNamespaceComments: true
 AllowShortFunctionsOnASingleLine: Inline
+IncludeBlocks: Preserve

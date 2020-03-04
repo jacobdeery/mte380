@@ -1,9 +1,11 @@
 build --incompatible_enable_cc_toolchain_resolution
 build --cxxopt='-std=c++17'
+build --cxxopt='-fconcepts'
 
 build:arm --incompatible_enable_cc_toolchain_resolution
 build:arm --platforms=//:arm_platform
 build:arm --extra_toolchains=//toolchains:arm_toolchain
 build:arm --cxxopt='-std=c++17'
+build:arm --cxxopt='-fconcepts'
 
 test --test_output=errors
