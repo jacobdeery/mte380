@@ -2,8 +2,6 @@
 
 #include "planner.h"
 
-#include <termios.h>
-
 #include <optional>
 
 namespace mte {

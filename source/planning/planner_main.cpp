@@ -6,11 +6,6 @@
 
 #include <thread>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <unistd.h>
-
 using namespace mte;
 using namespace std::chrono_literals;
 
@@ -21,8 +16,6 @@ constexpr auto kLoopDuration{100ms};
 
 int main() {
     InitializeLogging("planner");
-
-    bus::Receiver<char> planner_command_receiver("planner_command");
 
     ArduinoBridge bridge;
 
@@ -36,18 +29,14 @@ int main() {
 
     LOG_INFO("Connected to Arduino.");
 
-    std::this_thread::sleep_for(2s);
+    const auto write_error_message = bridge.Send(planning::MakeConstantSpeedPlan(60, 60));
+    if (write_error_message.has_value()) {
+        LOG_WARN("Arduino bridge failed to send data with error message: " +
+                 write_error_message.value());
+    }
 
     while (true) {
         const auto loop_start = std::chrono::system_clock::now();
-
-        // const auto write_error_message = bridge.Send(command.value());
-
-        // if (write_error_message.has_value()) {
-        //     LOG_WARN("Arduino bridge failed to send data with error message: " +
-        //                 write_error_message.value());
-        // }
-
         std::this_thread::sleep_until(loop_start + kLoopDuration);
     }
 }

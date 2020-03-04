@@ -16,5 +16,11 @@ WheelSpeedPlan::WheelSpeedPlan(const std::vector<double>& v_l_rpm,
               " points (got" + std::to_string(v_r_rpm.size()) + ")");
 }
 
+WheelSpeedPlan MakeConstantSpeedPlan(double speed_left, double speed_right) {
+    const std::vector<double> speeds_left(kNumWheelSpeedPoints, speed_left);
+    const std::vector<double> speeds_right(kNumWheelSpeedPoints, speed_right);
+    return WheelSpeedPlan(speeds_left, speeds_right);
+}
+
 }  // namespace planning
 }  // namespace mte
