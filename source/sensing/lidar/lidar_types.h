@@ -5,13 +5,20 @@
 namespace mte {
 namespace lidar {
 
-// TODO(jacob): Figure out complex type serialization and fix this class.
 class PointCloud {
    public:
-    PointCloud() = default;
+    explicit PointCloud(const std::vector<double>& vals);
+    PointCloud(const geometry::PointSet& point_set);
+
+    void Transform(const geometry::Transform3d& tf);
+    geometry::PointSet Points() const { return points; };
 
    private:
-    std::vector<geometry::Point3d> data;
+    geometry::PointSet points;
+
+   public:
+    std::string Serialize() const;
+    static PointCloud Deserialize(const std::string& buf);
 };
 
 PointCloud operator*(const geometry::Transform3d& tf, const PointCloud& pc);

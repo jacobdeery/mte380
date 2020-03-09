@@ -5,8 +5,9 @@ cc_library(
     srcs = ["lidar_types.cpp"],
     hdrs = ["lidar_types.h"],
     deps = [
+        "//source/core:logging",
+        "//source/core/bus:serialization",
         "//source/core/geometry",
-        "@eigen",
     ],
 )
 
