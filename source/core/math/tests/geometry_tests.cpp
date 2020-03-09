@@ -1,7 +1,7 @@
 #include "source/core/math/geometry.h"
 #include "source/core/testing/assertions.h"
 
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 
 #include <cmath>
 

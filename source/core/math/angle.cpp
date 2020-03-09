@@ -13,13 +13,5 @@ double NormalizeAngle(double angle) {
     return bounded_angle;
 }
 
-double DegToRad(double angle_deg) {
-    return NormalizeAngle(angle_deg * M_PI / 180.0);
-}
-
-double RadToDeg(double angle_rad) {
-    return NormalizeAngle(angle_rad) * 180.0 / M_PI;
-}
-
 }  // namespace math
 }  // namespace mte

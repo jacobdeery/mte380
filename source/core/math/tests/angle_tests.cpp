@@ -17,11 +17,11 @@ TEST(AngleTests, NormalizeAngleTests) {
     EXPECT_DOUBLE_EQ(-M_PI_2, NormalizeAngle(M_PI + M_PI_2));
     EXPECT_DOUBLE_EQ(M_PI_2, NormalizeAngle(-(M_PI + M_PI_2)));
 
-    EXPECT_DOUBLE_EQ(M_PI_2, NormalizeAngle(2*M_PI + M_PI_2));
-    EXPECT_DOUBLE_EQ(-M_PI_2, NormalizeAngle(-(2*M_PI + M_PI_2)));
+    EXPECT_DOUBLE_EQ(M_PI_2, NormalizeAngle(2 * M_PI + M_PI_2));
+    EXPECT_DOUBLE_EQ(-M_PI_2, NormalizeAngle(-(2 * M_PI + M_PI_2)));
 
-    EXPECT_DOUBLE_EQ(-M_PI_2, NormalizeAngle(3*M_PI + M_PI_2));
-    EXPECT_DOUBLE_EQ(M_PI_2, NormalizeAngle(-(3*M_PI + M_PI_2)));
+    EXPECT_DOUBLE_EQ(-M_PI_2, NormalizeAngle(3 * M_PI + M_PI_2));
+    EXPECT_DOUBLE_EQ(M_PI_2, NormalizeAngle(-(3 * M_PI + M_PI_2)));
 }
 
 TEST(AngleTests, RadToDegTests) {
@@ -33,10 +33,6 @@ TEST(AngleTests, RadToDegTests) {
     EXPECT_DOUBLE_EQ(-45, RadToDeg(-M_PI_4));
     EXPECT_DOUBLE_EQ(-90, RadToDeg(-M_PI_2));
     EXPECT_DOUBLE_EQ(-180, RadToDeg(-M_PI));
-
-    EXPECT_DOUBLE_EQ(0, RadToDeg(2 * M_PI));
-    EXPECT_DOUBLE_EQ(90, RadToDeg(2 * M_PI + M_PI_2));
-    EXPECT_DOUBLE_EQ(-90, RadToDeg(-(2 * M_PI + M_PI_2)));
 }
 
 TEST(AngleTests, DegToRadTests) {
@@ -48,8 +44,4 @@ TEST(AngleTests, DegToRadTests) {
     EXPECT_DOUBLE_EQ(-M_PI_4, DegToRad(-45));
     EXPECT_DOUBLE_EQ(-M_PI_2, DegToRad(-90));
     EXPECT_DOUBLE_EQ(-M_PI, DegToRad(-180));
-
-    EXPECT_DOUBLE_EQ(0, DegToRad(360));
-    EXPECT_DOUBLE_EQ(M_PI_2, DegToRad(450));
-    EXPECT_DOUBLE_EQ(-M_PI_2, DegToRad(-450));
 }
