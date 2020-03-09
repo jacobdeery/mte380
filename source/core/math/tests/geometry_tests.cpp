@@ -1,11 +1,11 @@
-#include "source/core/geometry/geometry.h"
+#include "source/core/math/geometry.h"
 #include "source/core/testing/assertions.h"
 
 #include <gtest/gtest.h>
 
 #include <cmath>
 
-using namespace mte::geometry;
+using namespace mte::math::geometry;
 
 constexpr double kEps{1e-9};
 constexpr double kAngleEps{1.7453293e-4};  // 0.01 degrees

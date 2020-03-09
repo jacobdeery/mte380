@@ -1,18 +1,19 @@
 #pragma once
 
 #include "source/core/bus/serialization.h"
-#include "source/core/geometry/geometry.h"
 #include "source/core/logging.h"
+#include "source/core/math/geometry.h"
 
 namespace mte {
 namespace localization {
 
 struct Pose {
     Pose() = default;
-    Pose(const geometry::Vector3d& position, const geometry::Vector3d& velocity,
-         const geometry::Vector3d& orientation, const geometry::Vector3d& angular_velocity);
+    Pose(const math::geometry::Vector3d& position, const math::geometry::Vector3d& velocity,
+         const math::geometry::Vector3d& orientation,
+         const math::geometry::Vector3d& angular_velocity);
 
-    geometry::Vector3d Position() const { return {x, y, z}; };
+    math::geometry::Vector3d Position() const { return {x, y, z}; };
 
     double x = 0;
     double y = 0;

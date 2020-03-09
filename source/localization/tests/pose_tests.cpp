@@ -6,10 +6,10 @@
 using namespace mte;
 
 TEST(PoseTests, PoseFromVector3ds) {
-    const geometry::Vector3d pos{1, 2, 3};
-    const geometry::Vector3d vel{4, 5, 6};
-    const geometry::Vector3d ori{7, 8, 9};
-    const geometry::Vector3d ang{10, 11, 12};
+    const math::geometry::Vector3d pos{1, 2, 3};
+    const math::geometry::Vector3d vel{4, 5, 6};
+    const math::geometry::Vector3d ori{7, 8, 9};
+    const math::geometry::Vector3d ang{10, 11, 12};
 
     const localization::Pose p{pos, vel, ori, ang};
 
@@ -31,10 +31,10 @@ TEST(PoseTests, PoseFromVector3ds) {
 }
 
 TEST(PoseTests, PoseRoundTrip) {
-    const geometry::Vector3d pos{1, 2, 3};
-    const geometry::Vector3d vel{4, 5, 6};
-    const geometry::Vector3d ori{7, 8, 9};
-    const geometry::Vector3d ang{10, 11, 12};
+    const math::geometry::Vector3d pos{1, 2, 3};
+    const math::geometry::Vector3d vel{4, 5, 6};
+    const math::geometry::Vector3d ori{7, 8, 9};
+    const math::geometry::Vector3d ang{10, 11, 12};
 
     const localization::Pose p{pos, vel, ori, ang};
 

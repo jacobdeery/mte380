@@ -6,6 +6,7 @@
 #include <tuple>
 
 namespace mte {
+namespace math {
 namespace geometry {
 
 using Eigen::Matrix3d;
@@ -30,4 +31,5 @@ std::vector<double> Unravel(const MatrixType& mat) {
 }
 
 }  // namespace geometry
+}  // namespace math
 }  // namespace mte
