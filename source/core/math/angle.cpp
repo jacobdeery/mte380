@@ -13,5 +13,17 @@ double NormalizeAngle(double angle) {
     return bounded_angle;
 }
 
+bool IsInAngularBounds(double angle, double min_angle, double max_angle) {
+    const double angle_normalized = math::NormalizeAngle(angle);
+    const double min_normalized = math::NormalizeAngle(min_angle);
+    const double max_normalized = math::NormalizeAngle(max_angle);
+
+    if (min_normalized < max_normalized) {
+        return min_normalized <= angle_normalized && angle_normalized <= max_normalized;
+    } else {
+        return min_normalized <= angle_normalized || angle_normalized <= max_normalized;
+    }
+}
+
 }  // namespace math
 }  // namespace mte

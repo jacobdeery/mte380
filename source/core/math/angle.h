@@ -15,5 +15,7 @@ constexpr double RadToDeg(double angle_rad) {
     return angle_rad * 180.0 / M_PI;
 }
 
+bool IsInAngularBounds(double angle, double min_angle, double max_angle);
+
 }  // namespace math
 }  // namespace mte

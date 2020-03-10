@@ -45,3 +45,20 @@ TEST(AngleTests, DegToRadTests) {
     EXPECT_DOUBLE_EQ(-M_PI_2, DegToRad(-90));
     EXPECT_DOUBLE_EQ(-M_PI, DegToRad(-180));
 }
+
+TEST(AngleTests, IsInAngularBoundsTests) {
+    EXPECT_TRUE(IsInAngularBounds(M_PI_2, 0, M_PI));
+    EXPECT_TRUE(IsInAngularBounds(-M_PI_2, -M_PI, 0));
+
+    EXPECT_FALSE(IsInAngularBounds(M_PI, 0, M_PI_2));
+    EXPECT_FALSE(IsInAngularBounds(-M_PI, -M_PI_2, 0));
+
+    EXPECT_TRUE(IsInAngularBounds(0, 0, M_PI));
+    EXPECT_TRUE(IsInAngularBounds(M_PI, 0, M_PI));
+
+    EXPECT_TRUE(IsInAngularBounds(M_PI - 0.1, M_PI - 0.2, -(M_PI - 0.2)));
+    EXPECT_TRUE(IsInAngularBounds(-(M_PI - 0.1), M_PI - 0.2, -(M_PI - 0.2)));
+
+    EXPECT_FALSE(IsInAngularBounds(M_PI - 0.3, M_PI - 0.2, -(M_PI - 0.2)));
+    EXPECT_FALSE(IsInAngularBounds(-(M_PI - 0.3), M_PI - 0.2, -(M_PI - 0.2)));
+}
