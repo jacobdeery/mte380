@@ -1,3 +1,4 @@
+#include "lidar_types.h"
 #include "source/core/bus/bus.h"
 #include "source/core/logging.h"
 #include "ydlidar_bridge.h"
@@ -16,8 +17,7 @@ int main() {
 
     lidar::LidarBridge lidar_bridge;
 
-    // TODO(jacob): Remove after the demo
-    bus::Sender<char> planner_command_sender("planner_command");
+    bus::Sender<lidar::PointCloud> sender("lidar_points");
 
     while (!lidar_bridge.Initialize()) {
         LOG_INFO("Unable to initialize the lidar bridge. Retrying in 1 second...");
@@ -29,9 +29,8 @@ int main() {
 
         const auto scan = lidar_bridge.Scan();
         if (scan.has_value()) {
-            if (lidar::IsThereAWall(scan.value())) {
-                planner_command_sender.Send('1');
-            }
+            const auto pc = lidar::PointCloud(scan.value());
+            sender.Send(pc);
         } else {
             LOG_WARN("Lidar scan had no value");
         }

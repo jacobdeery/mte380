@@ -3,8 +3,9 @@
 namespace mte {
 namespace localization {
 
-Pose::Pose(const geometry::Vector3d& position, const geometry::Vector3d& velocity,
-           const geometry::Vector3d& orientation, const geometry::Vector3d& angular_velocity) {
+Pose::Pose(const math::geometry::Vector3d& position, const math::geometry::Vector3d& velocity,
+           const math::geometry::Vector3d& orientation,
+           const math::geometry::Vector3d& angular_velocity) {
     x = position[0];
     y = position[1];
     z = position[2];

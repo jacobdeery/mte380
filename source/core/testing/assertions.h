@@ -1,6 +1,6 @@
 #pragma once
 
-#include "source/core/geometry/geometry.h"
+#include "source/core/math/geometry.h"
 #include "source/localization/pose.h"
 
 #include <gtest/gtest.h>

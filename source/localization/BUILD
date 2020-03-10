@@ -7,6 +7,6 @@ cc_library(
     deps = [
         "//source/core:logging",
         "//source/core/bus:serialization",
-        "//source/core/geometry",
+        "//source/core/math",
     ],
 )

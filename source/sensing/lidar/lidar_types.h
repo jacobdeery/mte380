@@ -1,20 +1,30 @@
 #pragma once
 
-#include "source/core/geometry/geometry.h"
+#include "source/core/math/geometry.h"
+
+#include "CYdLidar.h"
 
 namespace mte {
 namespace lidar {
 
-// TODO(jacob): Figure out complex type serialization and fix this class.
 class PointCloud {
    public:
-    PointCloud() = default;
+    explicit PointCloud(const std::vector<double>& vals);
+    PointCloud(const ydlidar::LaserScan& scan);
+    PointCloud(const math::geometry::PointSet& point_set);
+
+    void Transform(const math::geometry::Transform3d& tf);
+    math::geometry::PointSet Points() const { return points; };
 
    private:
-    std::vector<geometry::Point3d> data;
+    math::geometry::PointSet points;
+
+   public:
+    std::string Serialize() const;
+    static PointCloud Deserialize(const std::string& buf);
 };
 
-PointCloud operator*(const geometry::Transform3d& tf, const PointCloud& pc);
+PointCloud operator*(const math::geometry::Transform3d& tf, const PointCloud& pc);
 
 }  // namespace lidar
 }  // namespace mte

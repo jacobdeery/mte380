@@ -5,6 +5,7 @@
 #include <cmath>
 
 namespace mte {
+namespace math {
 namespace geometry {
 
 constexpr double kAngleEps{1.7453293e-4};  // 0.01 degrees
@@ -38,4 +39,5 @@ std::tuple<double, double, double> YPRFromTransform(const Transform3d& tf) {
 }
 
 }  // namespace geometry
+}  // namespace math
 }  // namespace mte

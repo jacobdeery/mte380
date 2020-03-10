@@ -6,12 +6,14 @@
 #include <tuple>
 
 namespace mte {
+namespace math {
 namespace geometry {
 
 using Eigen::Matrix3d;
 using Eigen::MatrixXd;
 using Eigen::Vector3d;
 typedef Eigen::Vector3d Point3d;
+typedef Eigen::Matrix<double, 3, Eigen::Dynamic> PointSet;
 
 typedef Eigen::Transform<double, 3, Eigen::Affine> Transform3d;
 using Eigen::Translation3d;
@@ -29,4 +31,5 @@ std::vector<double> Unravel(const MatrixType& mat) {
 }
 
 }  // namespace geometry
+}  // namespace math
 }  // namespace mte
