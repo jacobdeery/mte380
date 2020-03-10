@@ -17,7 +17,7 @@ cc_library(
     hdrs = ["icp.h"],
     deps = [
         "//source/core:logging",
-        "//source/core/geometry",
+        "//source/core/math",
         "//third_party/libicp",
     ],
 )

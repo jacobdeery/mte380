@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 using namespace mte::localization;
-namespace mg = mte::geometry;
+namespace mmg = mte::math::geometry;
 
 constexpr double kSmallEps{1e-9};
 constexpr double kBigEps{1e-3};
@@ -36,20 +36,20 @@ PointCloud MakeCorner(int points_per_wall = 100, double wall_length = 10) {
     double resolution = wall_length / points_per_wall;
     PointCloud points;
     for (int i = 0; i < points_per_wall; ++i) {
-        points.emplace_back(i*resolution, 0, 0);
+        points.emplace_back(i * resolution, 0, 0);
     }
     for (int i = 1; i < points_per_wall; ++i) {
-        points.emplace_back(wall_length, i*resolution, 0);
+        points.emplace_back(wall_length, i * resolution, 0);
     }
     return points;
 }
 
 TEST(LibicpIntegrationTests, LibicpMatrixConversionId) {
     const auto libicp_id = libicp::Matrix::eye(3);
-    const mg::Matrix3d geo_id = mg::Matrix3d::Identity();
+    const mmg::Matrix3d geo_id = mmg::Matrix3d::Identity();
 
     Expect_Libicp_Matrix_Equal(libicp_id, detail::ToLibicpMatrix(geo_id));
-    mte::ExpectMatrixEqual(geo_id, mg::Matrix3d{detail::FromLibicpMatrix(libicp_id)});
+    mte::ExpectMatrixEqual(geo_id, mmg::Matrix3d{detail::FromLibicpMatrix(libicp_id)});
 }
 
 TEST(LibicpIntegrationTests, LibicpMatrixConversionMoreValues) {
@@ -57,7 +57,7 @@ TEST(LibicpIntegrationTests, LibicpMatrixConversionMoreValues) {
     const libicp::Matrix libicp_mat{3, 3, matrix_vals.data()};
 
     // clang-format off
-    const mg::Matrix3d geo_mat{
+    const mmg::Matrix3d geo_mat{
         {1, 2, 3},
         {4, 5, 6},
         {7, 8, 9}
@@ -65,19 +65,19 @@ TEST(LibicpIntegrationTests, LibicpMatrixConversionMoreValues) {
     // clang-format on
 
     Expect_Libicp_Matrix_Equal(libicp_mat, detail::ToLibicpMatrix(geo_mat));
-    mte::ExpectMatrixEqual(geo_mat, mg::Matrix3d{detail::FromLibicpMatrix(libicp_mat)});
+    mte::ExpectMatrixEqual(geo_mat, mmg::Matrix3d{detail::FromLibicpMatrix(libicp_mat)});
 }
 
 TEST(LibicpIntegrationTests, LibicpMatrixConversionRoundTrip) {
     // clang-format off
-    const mg::Matrix3d geo_mat{
+    const mmg::Matrix3d geo_mat{
         {1, 2, 3},
         {4, 5, 6},
         {7, 8, 9}
     };
     // clang-format on
 
-    const mg::Matrix3d round_trip_mat{detail::FromLibicpMatrix(detail::ToLibicpMatrix(geo_mat))};
+    const mmg::Matrix3d round_trip_mat{detail::FromLibicpMatrix(detail::ToLibicpMatrix(geo_mat))};
 
     mte::ExpectMatrixEqual(geo_mat, round_trip_mat);
 }
@@ -86,9 +86,9 @@ TEST(LibicpIntegrationTests, LibicpMatrixSingleRotation) {
     const double yaw = 0.5;
 
     const auto libicp_mat = libicp::Matrix::rotMatZ(yaw);
-    const mg::Matrix3d geo_mat{mg::TransformFromYPR(yaw, 0, 0).rotation()};
+    const mmg::Matrix3d geo_mat{mmg::TransformFromYPR(yaw, 0, 0).rotation()};
 
-    mte::ExpectMatrixNear(geo_mat, mg::Matrix3d{detail::FromLibicpMatrix(libicp_mat)}, kSmallEps);
+    mte::ExpectMatrixNear(geo_mat, mmg::Matrix3d{detail::FromLibicpMatrix(libicp_mat)}, kSmallEps);
 }
 
 TEST(LibicpIntegrationTests, LibicpMatrixMultipleRotations) {
@@ -98,9 +98,9 @@ TEST(LibicpIntegrationTests, LibicpMatrixMultipleRotations) {
 
     const auto libicp_mat = libicp::Matrix::rotMatX(roll) * libicp::Matrix::rotMatY(pitch) *
                             libicp::Matrix::rotMatZ(yaw);
-    const mg::Matrix3d geo_mat{mg::TransformFromYPR(yaw, pitch, roll).rotation()};
+    const mmg::Matrix3d geo_mat{mmg::TransformFromYPR(yaw, pitch, roll).rotation()};
 
-    mte::ExpectMatrixNear(geo_mat, mg::Matrix3d{detail::FromLibicpMatrix(libicp_mat)}, kSmallEps);
+    mte::ExpectMatrixNear(geo_mat, mmg::Matrix3d{detail::FromLibicpMatrix(libicp_mat)}, kSmallEps);
 }
 
 TEST(LibicpIntegrationTests, ComposeTransform) {
@@ -113,9 +113,9 @@ TEST(LibicpIntegrationTests, ComposeTransform) {
                                 libicp::Matrix::rotMatZ(yaw);
     const libicp::Matrix libicp_trans_mat{3, 1, translation.data()};
 
-    const mg::Transform3d geo_tf =
-        mg::Translation3d{1.0, 2.0, 3.0} * mg::TransformFromYPR(yaw, pitch, roll);
-    const mg::Transform3d new_geo_tf = detail::ComposeTransform(libicp_rot_mat, libicp_trans_mat);
+    const mmg::Transform3d geo_tf =
+        mmg::Translation3d{1.0, 2.0, 3.0} * mmg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d new_geo_tf = detail::ComposeTransform(libicp_rot_mat, libicp_trans_mat);
 
     mte::ExpectMatrixNear(geo_tf.matrix(), new_geo_tf.matrix(), kSmallEps);
 }
@@ -130,8 +130,8 @@ TEST(LibicpIntegrationTests, DecomposeTransform) {
                                 libicp::Matrix::rotMatZ(yaw);
     const libicp::Matrix libicp_trans_mat{3, 1, translation.data()};
 
-    const mg::Transform3d geo_tf =
-        mg::Translation3d{1.0, 2.0, 3.0} * mg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d geo_tf =
+        mmg::Translation3d{1.0, 2.0, 3.0} * mmg::TransformFromYPR(yaw, pitch, roll);
     const auto [new_rot_mat, new_trans_mat] = detail::DecomposeTransform(geo_tf);
 
     Expect_Libicp_Matrix_Near(libicp_rot_mat, new_rot_mat, kSmallEps);
@@ -142,20 +142,20 @@ TEST(ICPTests, IdentityTransform) {
     const auto point_cloud = MakeCorner();
 
     ICPLocalizer localizer(point_cloud, kInlierDist);
-    const mg::Transform3d tf = localizer.Fit(point_cloud, mg::Transform3d::Identity());
+    const mmg::Transform3d tf = localizer.Fit(point_cloud, mmg::Transform3d::Identity());
 
-    mte::ExpectMatrixNear(mg::Transform3d::Identity().matrix(), tf.matrix(), kSmallEps);
+    mte::ExpectMatrixNear(mmg::Transform3d::Identity().matrix(), tf.matrix(), kSmallEps);
 }
 
 TEST(ICPTests, TranslationOnly) {
     const auto model_points = MakeCorner();
 
-    const mg::Transform3d tf_real{mg::Translation3d{1, 1, 1}};
+    const mmg::Transform3d tf_real{mmg::Translation3d{1, 1, 1}};
 
     const auto template_points = TransformPoints(model_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     std::cout << tf_real.matrix() << std::endl;
     std::cout << tf_guess.matrix() << std::endl;
@@ -167,12 +167,12 @@ TEST(ICPTests, YawOnly) {
     const auto model_points = MakeCorner();
 
     const double yaw = M_PI_2;
-    const mg::Transform3d tf_real = mg::TransformFromYPR(yaw, 0, 0);
+    const mmg::Transform3d tf_real = mmg::TransformFromYPR(yaw, 0, 0);
 
     const PointCloud template_points = TransformPoints(model_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     std::cout << tf_real.matrix() << std::endl;
     std::cout << tf_guess.matrix() << std::endl;
@@ -180,19 +180,18 @@ TEST(ICPTests, YawOnly) {
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kSmallEps);
 }
 
-
 TEST(ICPTests, YawPitchRoll) {
     const auto model_points = MakeCorner();
 
     const double yaw = M_PI_2;
     const double pitch = M_PI / 3.0;
     const double roll = -M_PI_2;
-    const mg::Transform3d tf_real = mg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d tf_real = mmg::TransformFromYPR(yaw, pitch, roll);
 
     const PointCloud template_points = TransformPoints(model_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kSmallEps);
 }
@@ -203,13 +202,13 @@ TEST(ICPTests, TranslationAndRotation) {
     const double yaw = M_PI_2;
     const double pitch = M_PI / 3.0;
     const double roll = -M_PI_2;
-    const mg::Transform3d tf_real =
-        mg::Translation3d{4, 5, 6} * mg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d tf_real =
+        mmg::Translation3d{4, 5, 6} * mmg::TransformFromYPR(yaw, pitch, roll);
 
     const PointCloud template_points = TransformPoints(model_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kSmallEps);
 }
@@ -220,14 +219,14 @@ TEST(ICPTests, DifferentNumberOfPoints) {
     const double yaw = M_PI_2;
     const double pitch = M_PI / 3.0;
     const double roll = -M_PI_2;
-    const mg::Transform3d tf_real =
-        mg::Translation3d{4, 5, 6} * mg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d tf_real =
+        mmg::Translation3d{4, 5, 6} * mmg::TransformFromYPR(yaw, pitch, roll);
 
     const PointCloud untransformed_template_points = MakeCorner(50, 5);
     const PointCloud template_points = TransformPoints(untransformed_template_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kSmallEps);
 }
@@ -238,15 +237,15 @@ TEST(ICPTests, SingleOutlier) {
     const double yaw = M_PI_2;
     const double pitch = M_PI / 3.0;
     const double roll = -M_PI_2;
-    const mg::Transform3d tf_real =
-        mg::Translation3d{4, 5, 6} * mg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d tf_real =
+        mmg::Translation3d{4, 5, 6} * mmg::TransformFromYPR(yaw, pitch, roll);
 
     PointCloud untransformed_template_points = model_points;
     untransformed_template_points.emplace_back(50, 50, 50);
     const PointCloud template_points = TransformPoints(untransformed_template_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kSmallEps);
 }
@@ -257,8 +256,8 @@ TEST(ICPTests, SeveralOutliers) {
     const double yaw = M_PI_2;
     const double pitch = M_PI / 3.0;
     const double roll = -M_PI_2;
-    const mg::Transform3d tf_real =
-        mg::Translation3d{4, 5, 6} * mg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d tf_real =
+        mmg::Translation3d{4, 5, 6} * mmg::TransformFromYPR(yaw, pitch, roll);
 
     PointCloud untransformed_template_points = model_points;
     const PointCloud outliers{{30, 0, 0}, {-30, 0, 0}, {0, 25, 0}, {1, 1, 20}};
@@ -267,7 +266,7 @@ TEST(ICPTests, SeveralOutliers) {
     const PointCloud template_points = TransformPoints(untransformed_template_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kSmallEps);
 }
@@ -285,8 +284,8 @@ TEST(ICPTests, SubsetOfModelPointsObserved) {
     const double yaw = M_PI_2;
     const double pitch = M_PI / 3.0;
     const double roll = -M_PI_2;
-    const mg::Transform3d tf_real =
-        mg::Translation3d{4, 5, 6} * mg::TransformFromYPR(yaw, pitch, roll);
+    const mmg::Transform3d tf_real =
+        mmg::Translation3d{4, 5, 6} * mmg::TransformFromYPR(yaw, pitch, roll);
 
     // clang-format off
     const PointCloud untransformed_template_points{
@@ -297,7 +296,7 @@ TEST(ICPTests, SubsetOfModelPointsObserved) {
     const PointCloud template_points = TransformPoints(untransformed_template_points, tf_real);
 
     ICPLocalizer localizer(model_points, kInlierDist);
-    const mg::Transform3d tf_guess = localizer.Fit(template_points, mg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kSmallEps);
 }
