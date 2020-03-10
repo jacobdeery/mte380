@@ -11,8 +11,11 @@ namespace lidar {
 constexpr int baud{115200};
 
 // TODO(jacob): Get these from CAD/calibration
-constexpr double kMinAngle = math::DegToRad(170);
-constexpr double kMaxAngle = math::DegToRad(190);
+constexpr double kLidarCentre = math::DegToRad(180);
+constexpr double kLidarFOVLeft = math::DegToRad(10);
+constexpr double kLidarFOVRight = math::DegToRad(10);
+constexpr double kMinAngle = kLidarCentre - kLidarFOVLeft;
+constexpr double kMaxAngle = kLidarCentre + kLidarFOVRight;
 
 ydlidar::LaserScan FilterScan(const ydlidar::LaserScan& scan,
                               const LidarFilterFunction& filter_fn) {
@@ -49,6 +52,8 @@ std::optional<ydlidar::LaserScan> LidarBridge::Scan() {
     ydlidar::LaserScan scan;
 
     if (laser.doProcessSimple(scan, is_hardware_error)) {
+        // NOTE: YdLidar's angular bounds configuration doesn't work with bounds on either side of
+        // 180 degrees, so we need to do our own filtering here.
         const auto filter_fn = [](const ydlidar::LaserPoint& pt) {
             return pt.range != 0 && math::IsInAngularBounds(pt.angle, kMinAngle, kMaxAngle);
         };
