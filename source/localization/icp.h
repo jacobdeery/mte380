@@ -12,18 +12,10 @@
 namespace mte {
 namespace localization {
 
-class ICPLocalizer {
-   public:
-    ICPLocalizer(const lidar::PointCloud& model_points, double inlier_dist);
-
-    math::geometry::Transform3d Fit(const lidar::PointCloud& template_points,
-                                    const math::geometry::Transform3d& initial_guess);
-
-   private:
-    const double inlier_dist;
-    std::vector<double> model_point_data;
-    std::optional<libicp::IcpPointToPlane> icp_backend;
-};
+math::geometry::Transform3d LocalizeToPointCloud(const lidar::PointCloud& model_points,
+                                                 const lidar::PointCloud& template_points,
+                                                 const math::geometry::Transform3d& initial_guess,
+                                                 double inlier_dist);
 
 namespace detail {
 

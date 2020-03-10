@@ -157,8 +157,8 @@ TEST(LibicpIntegrationTests, DecomposeTransform) {
 TEST(ICPTests, IdentityTransform) {
     const auto point_cloud = MakeCorner();
 
-    ICPLocalizer localizer(point_cloud, kInlierDist);
-    const mmg::Transform3d tf = localizer.Fit(point_cloud, mmg::Transform3d::Identity());
+    const mmg::Transform3d tf =
+        LocalizeToPointCloud(point_cloud, point_cloud, mmg::Transform3d::Identity(), kInlierDist);
 
     mte::ExpectMatrixNear(mmg::Transform3d::Identity().matrix(), tf.matrix(), kBigEps);
 }
@@ -170,8 +170,8 @@ TEST(ICPTests, TranslationOnly) {
 
     const auto template_points = tf_real * model_points;
 
-    ICPLocalizer localizer(model_points, kInlierDist);
-    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = LocalizeToPointCloud(
+        model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
 }
@@ -184,8 +184,8 @@ TEST(ICPTests, YawOnly) {
 
     const mte::lidar::PointCloud template_points = tf_real * model_points;
 
-    ICPLocalizer localizer(model_points, kInlierDist);
-    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = LocalizeToPointCloud(
+        model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
 }
@@ -200,8 +200,8 @@ TEST(ICPTests, YawAndTranslation) {
 
     const auto template_points = tf_real * model_points;
 
-    ICPLocalizer localizer(model_points, kInlierDist);
-    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = LocalizeToPointCloud(
+        model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
 }
@@ -216,8 +216,8 @@ TEST(ICPTests, DifferentResolution) {
 
     const auto template_points = tf_real * MakeCorner(20, 10);
 
-    ICPLocalizer localizer(model_points, kInlierDist);
-    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = LocalizeToPointCloud(
+        model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
     mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
 }
@@ -233,8 +233,8 @@ TEST(ICPTests, DISABLED_PortionOfScene) {
 
     const auto template_points = tf_real * MakeCorner(20, 8);
 
-    ICPLocalizer localizer(model_points, kInlierDist);
-    const mmg::Transform3d tf_guess = localizer.Fit(template_points, mmg::Transform3d::Identity());
+    const mmg::Transform3d tf_guess = LocalizeToPointCloud(
+        model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
     std::cout << tf_real.matrix() << std::endl;
     std::cout << tf_guess.matrix() << std::endl;

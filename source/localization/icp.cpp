@@ -92,18 +92,19 @@ libicp::Matrix DemoteRotationTo2D(const libicp::Matrix& mat_3d) {
 
 }  // namespace detail
 
-ICPLocalizer::ICPLocalizer(const lidar::PointCloud& model_points, double inlier_dist)
-    : inlier_dist{inlier_dist} {
-    icp_backend.emplace(model_points.Flatpack2D().data(), model_points.NumPoints(), 2);
-    icp_backend.value().setMaxIterations(500);
-    icp_backend.value().setMinDeltaParam(1e-6);
-}
+math::geometry::Transform3d LocalizeToPointCloud(const lidar::PointCloud& model_points,
+                                                 const lidar::PointCloud& template_points,
+                                                 const math::geometry::Transform3d& initial_guess,
+                                                 double inlier_dist) {
+    libicp::IcpPointToPlane icp_backend{model_points.Flatpack2D().data(), model_points.NumPoints(),
+                                        2};
+    icp_backend.setMaxIterations(500);
+    icp_backend.setMinDeltaParam(1e-6);
 
-math::geometry::Transform3d ICPLocalizer::Fit(const lidar::PointCloud& template_points,
-                                              const math::geometry::Transform3d& initial_guess) {
     auto [rotation, translation] = detail::DecomposeTransform(initial_guess);
-    icp_backend.value().fit(template_points.Flatpack2D().data(), template_points.NumPoints(),
-                            rotation, translation, inlier_dist);
+    icp_backend.fit(template_points.Flatpack2D().data(), template_points.NumPoints(), rotation,
+                    translation, inlier_dist);
+
     // NOTE: libicp returns the transform that gives M = R*T + t. For localization, we want the
     // inverse (the transform required for us to have observed the points we did.)
     return detail::ComposeTransform(rotation, translation).inverse();
