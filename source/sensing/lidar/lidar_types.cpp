@@ -19,6 +19,16 @@ PointCloud::PointCloud(const std::vector<double>& xyz_vals) {
     }
 }
 
+PointCloud::PointCloud(const std::vector<math::geometry::Point3d>& triplets) {
+    CHECK(triplets.size() > 0, "Received no point values");
+    points.resize(3, triplets.size());
+    for (size_t i = 0; i < triplets.size(); ++i) {
+        points(0, i) = triplets[i][0];
+        points(1, i) = triplets[i][1];
+        points(2, i) = triplets[i][2];
+    }
+}
+
 PointCloud::PointCloud(const ydlidar::LaserScan& scan) {
     CHECK(scan.data.size() > 0, "Laser scan has no points");
     points.resize(3, scan.data.size());
@@ -31,6 +41,27 @@ PointCloud::PointCloud(const ydlidar::LaserScan& scan) {
 
 PointCloud::PointCloud(const math::geometry::PointSet& point_set) {
     points = point_set;
+}
+
+std::vector<double> PointCloud::Flatpack3D() const {
+    std::vector<double> vals;
+    vals.reserve(points.cols() * 3);
+    for (int i = 0; i < points.cols(); ++i) {
+        vals.emplace_back(points(0, i));
+        vals.emplace_back(points(1, i));
+        vals.emplace_back(points(2, i));
+    }
+    return vals;
+}
+
+std::vector<double> PointCloud::Flatpack2D() const {
+    std::vector<double> vals;
+    vals.reserve(points.cols() * 2);
+    for (int i = 0; i < points.cols(); ++i) {
+        vals.emplace_back(points(0, i));
+        vals.emplace_back(points(1, i));
+    }
+    return vals;
 }
 
 void PointCloud::Transform(const math::geometry::Transform3d& tf) {
@@ -47,7 +78,7 @@ PointCloud PointCloud::Deserialize(const std::string& buf) {
 }
 
 PointCloud operator*(const math::geometry::Transform3d& tf, const PointCloud& pc) {
-    return PointCloud{tf * pc.Points()};
+    return PointCloud{tf * pc.PointSet()};
 }
 
 }  // namespace lidar

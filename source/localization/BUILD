@@ -18,6 +18,7 @@ cc_library(
     deps = [
         "//source/core:logging",
         "//source/core/math",
+        "//source/sensing/lidar:lidar_types",
         "//third_party/libicp",
     ],
 )

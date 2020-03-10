@@ -26,54 +26,87 @@ std::pair<libicp::Matrix, libicp::Matrix> DecomposeTransform(
     const math::geometry::Transform3d& tf) {
     const math::geometry::Matrix3d rotation{tf.rotation()};
     const math::geometry::Vector3d translation{tf.translation()};
-    return {ToLibicpMatrix(rotation), ToLibicpMatrix(translation)};
+    return {DemoteRotationTo2D(ToLibicpMatrix(rotation)),
+            DemoteTranslationTo2D(ToLibicpMatrix(translation))};
 }
 
 math::geometry::Transform3d ComposeTransform(const libicp::Matrix& rotation,
                                              const libicp::Matrix& translation) {
-    CHECK(translation.m == 3 && translation.n == 1, "Translation vector must be 3x1 (got " +
+    CHECK(translation.m == 2 && translation.n == 1, "Translation vector must be 2x1 (got " +
                                                         std::to_string(translation.m) + "x" +
                                                         std::to_string(translation.n) + ")");
-    CHECK(rotation.m == 3 && rotation.n == 3, "Rotation matrix must be 3x3 (got " +
+    CHECK(rotation.m == 2 && rotation.n == 2, "Rotation matrix must be 2x2 (got " +
                                                   std::to_string(rotation.m) + "x" +
                                                   std::to_string(rotation.n) + ")");
 
-    return math::geometry::Transform3d{
-               math::geometry::Translation3d{FromLibicpMatrix(translation)}} *
-           math::geometry::Transform3d{math::geometry::Matrix3d{FromLibicpMatrix(rotation)}};
+    const math::geometry::Transform3d tf_trans{
+        math::geometry::Translation3d{FromLibicpMatrix(PromoteTranslationTo3D(translation))}};
+    const math::geometry::Transform3d tf_rot{
+        math::geometry::Matrix3d{FromLibicpMatrix(PromoteRotationTo3D(rotation))}};
+
+    return tf_trans * tf_rot;
+}
+
+libicp::Matrix PromoteTranslationTo3D(const libicp::Matrix& mat_2d) {
+    CHECK(mat_2d.m == 2 && mat_2d.n == 1, "2D translation vector must be 2x1 (got " +
+                                              std::to_string(mat_2d.m) + "x" +
+                                              std::to_string(mat_2d.n) + ")");
+    const std::vector<double> data{mat_2d.val[0][0], mat_2d.val[1][0], 0};
+    return libicp::Matrix(3, 1, data.data());
+}
+
+libicp::Matrix PromoteRotationTo3D(const libicp::Matrix& mat_2d) {
+    CHECK(mat_2d.m == 2 && mat_2d.n == 2, "2D rotation matrix must be 2x2 (got " +
+                                              std::to_string(mat_2d.m) + "x" +
+                                              std::to_string(mat_2d.n) + ")");
+    // clang-format off
+    const std::vector<double> data{
+        mat_2d.val[0][0], mat_2d.val[0][1], 0,
+        mat_2d.val[1][0], mat_2d.val[1][1], 0,
+        0, 0, 1
+    };
+    // clang-format on
+    return libicp::Matrix(3, 3, data.data());
+}
+
+libicp::Matrix DemoteTranslationTo2D(const libicp::Matrix& mat_3d) {
+    CHECK(mat_3d.m == 3 && mat_3d.n == 1, "3D translation vector must be 3x1 (got " +
+                                              std::to_string(mat_3d.m) + "x" +
+                                              std::to_string(mat_3d.n) + ")");
+    const std::vector<double> data{mat_3d.val[0][0], mat_3d.val[1][0]};
+    return libicp::Matrix(2, 1, data.data());
+}
+
+libicp::Matrix DemoteRotationTo2D(const libicp::Matrix& mat_3d) {
+    CHECK(mat_3d.m == 3 && mat_3d.n == 3, "3D rotation matrix must be 3x3 (got " +
+                                              std::to_string(mat_3d.m) + "x" +
+                                              std::to_string(mat_3d.n) + ")");
+    // clang-format off
+    const std::vector<double> data{
+        mat_3d.val[0][0], mat_3d.val[0][1],
+        mat_3d.val[1][0], mat_3d.val[1][1]
+    };
+    // clang-format on
+    return libicp::Matrix(2, 2, data.data());
 }
 
 }  // namespace detail
 
-ICPLocalizer::ICPLocalizer(const PointCloud& model_points, double inlier_dist)
+ICPLocalizer::ICPLocalizer(const lidar::PointCloud& model_points, double inlier_dist)
     : inlier_dist{inlier_dist} {
-    // TODO(jacob): Investigate more efficient ways to get this data into ICP (possibly a PointCloud
-    // type with contiguous memory instead of a vector of Point3ds).
-    model_point_data.reserve(model_points.size() * 3);
-    for (const math::geometry::Point3d& point : model_points) {
-        model_point_data.emplace_back(point[0]);
-        model_point_data.emplace_back(point[1]);
-        model_point_data.emplace_back(point[2]);
-    }
-    icp_backend.emplace(model_point_data.data(), model_points.size(), 3);
+    icp_backend.emplace(model_points.Flatpack2D().data(), model_points.NumPoints(), 2);
     icp_backend.value().setMaxIterations(500);
     icp_backend.value().setMinDeltaParam(1e-6);
 }
 
-math::geometry::Transform3d ICPLocalizer::Fit(const PointCloud& template_points,
+math::geometry::Transform3d ICPLocalizer::Fit(const lidar::PointCloud& template_points,
                                               const math::geometry::Transform3d& initial_guess) {
-    std::vector<double> template_point_data;
-    template_point_data.reserve(template_points.size() * 3);
-    for (const math::geometry::Point3d& point : template_points) {
-        template_point_data.emplace_back(point[0]);
-        template_point_data.emplace_back(point[1]);
-        template_point_data.emplace_back(point[2]);
-    }
     auto [rotation, translation] = detail::DecomposeTransform(initial_guess);
-    icp_backend.value().fit(template_point_data.data(), template_points.size(), rotation,
-                            translation, inlier_dist);
-    // NOTE: libicp returns the transform that gives M = R*T + t
-    return detail::ComposeTransform(rotation, translation);
+    icp_backend.value().fit(template_points.Flatpack2D().data(), template_points.NumPoints(),
+                            rotation, translation, inlier_dist);
+    // NOTE: libicp returns the transform that gives M = R*T + t. For localization, we want the
+    // inverse (the transform required for us to have observed the points we did.)
+    return detail::ComposeTransform(rotation, translation).inverse();
 }
 
 }  // namespace localization
