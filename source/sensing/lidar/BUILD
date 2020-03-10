@@ -7,7 +7,20 @@ cc_library(
     deps = [
         "//source/core:logging",
         "//source/core/bus:serialization",
-        "//source/core/geometry",
+        "//source/core/math",
+        "@ydlidar",
+    ],
+)
+
+cc_library(
+    name = "ydlidar_bridge",
+    srcs = ["ydlidar_bridge.cpp"],
+    hdrs = ["ydlidar_bridge.h"],
+    deps = [
+        "//source/core:logging",
+        "//source/core/bus:serialization",
+        "//source/core/math",
+        "@ydlidar",
     ],
 )
 
@@ -15,11 +28,10 @@ cc_binary(
     name = "lidar_driver_main",
     srcs = [
         "lidar_driver.cpp",
-        "ydlidar_bridge.cpp",
-        "ydlidar_bridge.h",
     ],
     deps = [
         ":lidar_types",
+        ":ydlidar_bridge",
         "//source/core:logging",
         "//source/core/bus",
         "@ydlidar",

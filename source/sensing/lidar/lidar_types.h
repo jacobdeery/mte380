@@ -1,6 +1,8 @@
 #pragma once
 
-#include "source/core/geometry/geometry.h"
+#include "source/core/math/geometry.h"
+
+#include "CYdLidar.h"
 
 namespace mte {
 namespace lidar {
@@ -8,20 +10,21 @@ namespace lidar {
 class PointCloud {
    public:
     explicit PointCloud(const std::vector<double>& vals);
-    PointCloud(const geometry::PointSet& point_set);
+    PointCloud(const ydlidar::LaserScan& scan);
+    PointCloud(const math::geometry::PointSet& point_set);
 
-    void Transform(const geometry::Transform3d& tf);
-    geometry::PointSet Points() const { return points; };
+    void Transform(const math::geometry::Transform3d& tf);
+    math::geometry::PointSet Points() const { return points; };
 
    private:
-    geometry::PointSet points;
+    math::geometry::PointSet points;
 
    public:
     std::string Serialize() const;
     static PointCloud Deserialize(const std::string& buf);
 };
 
-PointCloud operator*(const geometry::Transform3d& tf, const PointCloud& pc);
+PointCloud operator*(const math::geometry::Transform3d& tf, const PointCloud& pc);
 
 }  // namespace lidar
 }  // namespace mte

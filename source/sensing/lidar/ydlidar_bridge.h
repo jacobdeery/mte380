@@ -1,13 +1,16 @@
 #pragma once
 
-#include "lidar_types.h"
-
 #include "CYdLidar.h"
 
+#include <functional>
 #include <optional>
 
 namespace mte {
 namespace lidar {
+
+typedef std::function<bool(const ydlidar::LaserPoint&)> LidarFilterFunction;
+
+ydlidar::LaserScan FilterScan(const ydlidar::LaserScan& scan, const LidarFilterFunction& filter_fn);
 
 class LidarBridge {
    public:
@@ -18,8 +21,6 @@ class LidarBridge {
    private:
     ydlidar::CYdLidar laser;
 };
-
-bool IsThereAWall(const ydlidar::LaserScan& scan);
 
 }  // namespace lidar
 }  // namespace mte
