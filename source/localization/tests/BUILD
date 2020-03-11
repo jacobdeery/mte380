@@ -17,6 +17,8 @@ cc_test(
         "//source/core/math",
         "//source/core/testing:testing_utils",
         "//source/localization:icp",
+        "//source/localization:localizer",
+        "//source/localization:pose",
         "//source/sensing/lidar:lidar_types",
         "@googletest//:gtest_main",
     ],

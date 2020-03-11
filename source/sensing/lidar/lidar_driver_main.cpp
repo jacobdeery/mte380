@@ -1,5 +1,6 @@
 #include "lidar_types.h"
 #include "source/core/bus/bus.h"
+#include "source/core/calibration.h"
 #include "source/core/logging.h"
 #include "ydlidar_bridge.h"
 
@@ -29,7 +30,8 @@ int main() {
 
         const auto scan = lidar_bridge.Scan();
         if (scan.has_value()) {
-            const auto pc = lidar::PointCloud(scan.value());
+            auto pc = lidar::PointCloud(scan.value());
+            pc.Transform(calibration::T_robot_lidar);
             sender.Send(pc);
         } else {
             LOG_WARN("Lidar scan had no value");

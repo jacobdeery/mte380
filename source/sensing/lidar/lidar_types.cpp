@@ -68,6 +68,11 @@ void PointCloud::Transform(const math::geometry::Transform3d& tf) {
     points = tf * points;
 }
 
+std::ostream& operator<<(std::ostream& out, const PointCloud& pc) {
+    out << pc.points.transpose();
+    return out;
+}
+
 std::string PointCloud::Serialize() const {
     return bus::Serialize(math::geometry::Unravel(points.transpose()));
 }

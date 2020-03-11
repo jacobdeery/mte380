@@ -1,6 +1,7 @@
 #pragma once
 
 #include "source/core/math/geometry.h"
+#include "source/localization/pose.h"
 #include "source/sensing/lidar/lidar_types.h"
 
 #include "third_party/libicp/icpPointToPlane.h"
@@ -16,6 +17,10 @@ math::geometry::Transform3d LocalizeToPointCloud(const lidar::PointCloud& model_
                                                  const lidar::PointCloud& template_points,
                                                  const math::geometry::Transform3d& initial_guess,
                                                  double inlier_dist);
+
+Pose LocalizeToPointCloud(const lidar::PointCloud& model_points,
+                          const lidar::PointCloud& template_points, const Pose& initial_guess,
+                          double inlier_dist);
 
 namespace detail {
 

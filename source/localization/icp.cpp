@@ -105,9 +105,14 @@ math::geometry::Transform3d LocalizeToPointCloud(const lidar::PointCloud& model_
     icp_backend.fit(template_points.Flatpack2D().data(), template_points.NumPoints(), rotation,
                     translation, inlier_dist);
 
-    // NOTE: libicp returns the transform that gives M = R*T + t. For localization, we want the
-    // inverse (the transform required for us to have observed the points we did.)
-    return detail::ComposeTransform(rotation, translation).inverse();
+    return detail::ComposeTransform(rotation, translation);
+}
+
+Pose LocalizeToPointCloud(const lidar::PointCloud& model_points,
+                          const lidar::PointCloud& template_points, const Pose& initial_guess,
+                          double inlier_dist) {
+    return Pose{LocalizeToPointCloud(model_points, template_points, ExtractTransform(initial_guess),
+                                     inlier_dist)};
 }
 
 }  // namespace localization

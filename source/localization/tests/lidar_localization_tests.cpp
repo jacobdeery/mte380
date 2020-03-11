@@ -1,6 +1,8 @@
 #include "source/core/math/angle.h"
 #include "source/core/testing/assertions.h"
 #include "source/localization/icp.h"
+#include "source/localization/localizer.h"
+#include "source/localization/pose.h"
 #include "source/sensing/lidar/lidar_types.h"
 
 #include "gtest/gtest.h"
@@ -45,6 +47,59 @@ mte::lidar::PointCloud MakeCorner(int points_per_wall = 100, double wall_length 
         points.emplace_back(wall_length, i * resolution, 0);
     }
     return mte::lidar::PointCloud{points};
+}
+
+TEST(GetVisibleWallPointsTests, RightWall) {
+    const mmg::Vector3d pos{kWallXMax - 0.1, kWallYMax / 2, 0};
+    const mmg::Vector3d vel{0, 0, 0};
+    const mmg::Vector3d ori{0, 0, 0};
+    const mmg::Vector3d ang{0, 0, 0};
+
+    const Pose close_to_right_wall{pos, vel, ori, ang};
+
+    const auto points = GetVisibleWallPoints(close_to_right_wall);
+
+    ASSERT_TRUE(points.NumPoints() > 0);
+    const auto points_mat = points.PointSet();
+
+    for (size_t i = 0; i < points.NumPoints(); ++i) {
+        EXPECT_DOUBLE_EQ(kWallXMax, points_mat(0, i));
+    }
+}
+
+TEST(GetVisibleWallPointsTests, TopWall) {
+    const mmg::Vector3d pos{kWallXMax / 2, kWallYMax - 0.1, 0};
+    const mmg::Vector3d vel{0, 0, 0};
+    const mmg::Vector3d ori{M_PI_2, 0, 0};
+    const mmg::Vector3d ang{0, 0, 0};
+
+    const Pose close_to_top_wall{pos, vel, ori, ang};
+
+    const auto points = GetVisibleWallPoints(close_to_top_wall);
+
+    ASSERT_TRUE(points.NumPoints() > 0);
+    const auto points_mat = points.PointSet();
+
+    for (size_t i = 0; i < points.NumPoints(); ++i) {
+        EXPECT_DOUBLE_EQ(kWallYMax, points_mat(1, i));
+    }
+}
+
+TEST(GetVisibleWallPointsTests, BottomLeftCorner) {
+    const mmg::Vector3d pos{kWallXMin + 0.2, kWallYMin + 0.2, 0};
+    const mmg::Vector3d vel{0, 0, 0};
+    const mmg::Vector3d ori{M_PI + M_PI_4, 0, 0};
+    const mmg::Vector3d ang{0, 0, 0};
+
+    const Pose close_to_corner{pos, vel, ori, ang};
+
+    const auto points = GetVisibleWallPoints(close_to_corner);
+
+    ASSERT_TRUE(points.NumPoints() > 0);
+    const auto points_mat = points.PointSet();
+
+    EXPECT_DOUBLE_EQ(kWallXMin, points_mat(0, 0));
+    EXPECT_DOUBLE_EQ(kWallYMin, points_mat(1, points.NumPoints() - 1));
 }
 
 TEST(LibicpIntegrationTests, LibicpMatrixConversionId) {
@@ -166,14 +221,14 @@ TEST(ICPTests, IdentityTransform) {
 TEST(ICPTests, TranslationOnly) {
     const auto model_points = MakeCorner();
 
-    const mmg::Transform3d tf_real{mmg::Translation3d{1, 2, 0}};
+    const mmg::Transform3d tf_real{mmg::Translation3d{0.1, 0.2, 0}};
 
     const auto template_points = tf_real * model_points;
 
     const mmg::Transform3d tf_guess = LocalizeToPointCloud(
         model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
-    mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
+    mte::ExpectMatrixNear(tf_real.inverse().matrix(), tf_guess.matrix(), kBigEps);
 }
 
 TEST(ICPTests, YawOnly) {
@@ -187,7 +242,7 @@ TEST(ICPTests, YawOnly) {
     const mmg::Transform3d tf_guess = LocalizeToPointCloud(
         model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
-    mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
+    mte::ExpectMatrixNear(tf_real.inverse().matrix(), tf_guess.matrix(), kBigEps);
 }
 
 TEST(ICPTests, YawAndTranslation) {
@@ -203,7 +258,7 @@ TEST(ICPTests, YawAndTranslation) {
     const mmg::Transform3d tf_guess = LocalizeToPointCloud(
         model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
-    mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
+    mte::ExpectMatrixNear(tf_real.inverse().matrix(), tf_guess.matrix(), kBigEps);
 }
 
 TEST(ICPTests, DifferentResolution) {
@@ -219,25 +274,5 @@ TEST(ICPTests, DifferentResolution) {
     const mmg::Transform3d tf_guess = LocalizeToPointCloud(
         model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
 
-    mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
-}
-
-// TODO(jacob): Enable this test once FOV filter is done.
-TEST(ICPTests, DISABLED_PortionOfScene) {
-    const auto model_points = MakeCorner(100, 10);
-
-    const double yaw = k45Degrees;
-    const mmg::Transform3d tf_yaw = mmg::TransformFromYPR(yaw, 0, 0);
-    const mmg::Transform3d tf_trans{mmg::Translation3d{1, 2, 0}};
-    const mmg::Transform3d tf_real = tf_trans * tf_yaw;
-
-    const auto template_points = tf_real * MakeCorner(20, 8);
-
-    const mmg::Transform3d tf_guess = LocalizeToPointCloud(
-        model_points, template_points, mmg::Transform3d::Identity(), kInlierDist);
-
-    std::cout << tf_real.matrix() << std::endl;
-    std::cout << tf_guess.matrix() << std::endl;
-
-    mte::ExpectMatrixNear(tf_real.matrix(), tf_guess.matrix(), kBigEps);
+    mte::ExpectMatrixNear(tf_real.inverse().matrix(), tf_guess.matrix(), kBigEps);
 }

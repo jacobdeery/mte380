@@ -20,6 +20,8 @@ class PointCloud {
     std::vector<double> Flatpack2D() const;
     size_t NumPoints() const { return points.cols(); };
 
+    friend std::ostream& operator<<(std::ostream& out, const PointCloud& pc);
+
    private:
     math::geometry::PointSet points;
 

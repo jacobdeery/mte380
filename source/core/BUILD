@@ -10,6 +10,16 @@ cc_binary(
 )
 
 cc_library(
+    name = "calibration",
+    srcs = ["calibration.cpp"],
+    hdrs = ["calibration.h"],
+    deps = [
+        "//source/core/math",
+        "//source/localization:pose",
+    ],
+)
+
+cc_library(
     name = "logging",
     srcs = ["logging.cpp"],
     hdrs = ["logging.h"],
