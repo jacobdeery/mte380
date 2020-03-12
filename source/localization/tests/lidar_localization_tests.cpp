@@ -1,3 +1,4 @@
+#include "source/core/calibration.h"
 #include "source/core/math/angle.h"
 #include "source/core/testing/assertions.h"
 #include "source/localization/icp.h"
@@ -8,6 +9,7 @@
 #include "gtest/gtest.h"
 
 using namespace mte::localization;
+using namespace mte::calibration;
 namespace mmg = mte::math::geometry;
 
 constexpr double kSmallEps{1e-9};

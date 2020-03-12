@@ -6,12 +6,14 @@
 #include <cmath>
 #include <iostream>
 
+using namespace mte::calibration;
+
 namespace mte {
 namespace localization {
 
 lidar::PointCloud GetVisibleWallPoints(const Pose& pose) {
-    const double angle_min = pose.yaw - calibration::kLidarFOVRight;
-    const double angle_max = pose.yaw + calibration::kLidarFOVLeft;
+    const double angle_min = pose.yaw - kLidarFOVRight;
+    const double angle_max = pose.yaw + kLidarFOVLeft;
 
     const double angle_xmin_ymin = atan2(kWallYMin - pose.y, kWallXMin - pose.x);
     const double angle_xmin_ymax = atan2(kWallYMax - pose.y, kWallXMin - pose.x);
