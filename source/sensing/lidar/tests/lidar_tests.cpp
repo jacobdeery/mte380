@@ -24,7 +24,23 @@ TEST(PointCloudTests, CreateFromVector) {
 
     const lidar::PointCloud pc{xyz_vals};
 
-    mte::ExpectMatrixEqual(expected_points, pc.Points());
+    mte::ExpectMatrixEqual(expected_points, pc.PointSet());
+}
+
+TEST(PointCloudTests, CreateFromTriplets) {
+    const std::vector<math::geometry::Point3d> triplets{{1, 2, 3}, {4, 5, 6}};
+
+    // clang-format off
+    const math::geometry::PointSet expected_points {
+        {1, 4},
+        {2, 5},
+        {3, 6},
+    };
+    // clang-format on
+
+    const lidar::PointCloud pc{triplets};
+
+    mte::ExpectMatrixEqual(expected_points, pc.PointSet());
 }
 
 TEST(PointCloudTests, NoPointsThrows) {
@@ -37,6 +53,32 @@ TEST(PointCloudTests, NonMultipleOfThreeThrows) {
     const std::vector<double> vals = {1, 2, 3, 4, 5};
 
     EXPECT_ANY_THROW(lidar::PointCloud{vals});
+}
+
+TEST(PointCloudTests, Flatpack3DTests) {
+    const std::vector<double> xyz_vals{1, 2, 3, 4, 5, 6};
+    const lidar::PointCloud pc{xyz_vals};
+
+    const auto fp = pc.Flatpack3D();
+
+    ASSERT_EQ(xyz_vals.size(), fp.size());
+    for (size_t i = 0; i < xyz_vals.size(); ++i) {
+        EXPECT_DOUBLE_EQ(xyz_vals[i], fp[i]);
+    }
+}
+
+TEST(PointCloudTests, Flatpack2DTests) {
+    const std::vector<double> xyz_vals{1, 2, 3, 4, 5, 6};
+    const lidar::PointCloud pc{xyz_vals};
+
+    const auto fp = pc.Flatpack2D();
+
+    ASSERT_EQ(4, fp.size());
+
+    EXPECT_DOUBLE_EQ(1, fp[0]);
+    EXPECT_DOUBLE_EQ(2, fp[1]);
+    EXPECT_DOUBLE_EQ(4, fp[2]);
+    EXPECT_DOUBLE_EQ(5, fp[3]);
 }
 
 TEST(PointCloudTests, TransformPointCloud) {
@@ -55,7 +97,7 @@ TEST(PointCloudTests, TransformPointCloud) {
     lidar::PointCloud pc{xyz_vals};
     pc.Transform(tf);
 
-    mte::ExpectMatrixEqual(expected_points, pc.Points());
+    mte::ExpectMatrixEqual(expected_points, pc.PointSet());
 }
 
 TEST(PointCloudTests, TransformPointCloudOperator) {
@@ -73,7 +115,7 @@ TEST(PointCloudTests, TransformPointCloudOperator) {
 
     lidar::PointCloud pc{xyz_vals};
 
-    mte::ExpectMatrixEqual(expected_points, (tf * pc).Points());
+    mte::ExpectMatrixEqual(expected_points, (tf * pc).PointSet());
 }
 
 TEST(PointCloudTests, PointCloudRoundTrip) {
@@ -82,7 +124,7 @@ TEST(PointCloudTests, PointCloudRoundTrip) {
 
     const auto round_trip_pc = bus::Deserialize<lidar::PointCloud>(bus::Serialize(pc));
 
-    mte::ExpectMatrixEqual(pc.Points(), round_trip_pc.Points());
+    mte::ExpectMatrixEqual(pc.PointSet(), round_trip_pc.PointSet());
 }
 
 TEST(YdLidarIntegrationTests, PointCloudFromLaserScan) {
@@ -123,7 +165,7 @@ TEST(YdLidarIntegrationTests, PointCloudFromLaserScan) {
     // NOTE: With sqrt, atan2, sin/cos, and the fact that LaserScan uses floats rather than doubles,
     // there's some inaccuracy converting to and from range/angle form. We want to make sure that
     // the error is "small enough", so we choose 1e-6 m as a very conservative bound.
-    mte::ExpectMatrixNear(true_points, pc.Points(), kEps);
+    mte::ExpectMatrixNear(true_points, pc.PointSet(), kEps);
 }
 
 TEST(YdLidarIntegrationTests, FilterScan) {

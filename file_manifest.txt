@@ -1,2 +1,3 @@
 bazel-bin/source/sensing/lidar/lidar_driver_main
+bazel-bin/source/localization/localizer_main
 bazel-bin/source/planning/planner_main

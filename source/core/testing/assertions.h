@@ -7,7 +7,7 @@
 
 namespace mte {
 
-void Expect_Pose_Eq(const localization::Pose& p1, const localization::Pose& p2) {
+void ExpectPoseEqual(const localization::Pose& p1, const localization::Pose& p2) {
     EXPECT_DOUBLE_EQ(p1.x, p2.x);
     EXPECT_DOUBLE_EQ(p1.y, p2.y);
     EXPECT_DOUBLE_EQ(p1.z, p2.z);

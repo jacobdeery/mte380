@@ -14,13 +14,31 @@ Pose::Pose(const math::geometry::Vector3d& position, const math::geometry::Vecto
     v_y = velocity[1];
     v_z = velocity[2];
 
-    roll = orientation[0];
+    yaw = orientation[0];
     pitch = orientation[1];
-    yaw = orientation[2];
+    roll = orientation[2];
 
-    roll_rate = angular_velocity[0];
+    yaw_rate = angular_velocity[0];
     pitch_rate = angular_velocity[1];
-    yaw_rate = angular_velocity[2];
+    roll_rate = angular_velocity[2];
+}
+
+Pose::Pose(const math::geometry::Transform3d& tf) {
+    const math::geometry::Vector3d trans{tf.translation()};
+
+    x = trans(0);
+    y = trans(1);
+    z = trans(2);
+
+    std::tie(yaw, pitch, roll) = math::geometry::YPRFromTransform(tf);
+}
+
+math::geometry::Transform3d ExtractTransform(const Pose& pose) {
+    const math::geometry::Transform3d tf_trans{
+        math::geometry::Translation3d{pose.x, pose.y, pose.z}};
+    const math::geometry::Transform3d tf_rot =
+        math::geometry::TransformFromYPR(pose.yaw, pose.pitch, pose.roll);
+    return tf_trans * tf_rot;
 }
 
 }  // namespace localization

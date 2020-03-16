@@ -9,3 +9,32 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "lidar_localization_tests",
+    srcs = ["lidar_localization_tests.cpp"],
+    deps = [
+        "//source/core:calibration",
+        "//source/core/math",
+        "//source/core/testing:testing_utils",
+        "//source/localization:icp",
+        "//source/localization:localizer",
+        "//source/localization:pose",
+        "//source/sensing/lidar:lidar_types",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "localizer_tests",
+    srcs = ["localizer_tests.cpp"],
+    deps = [
+        "//source/core:calibration",
+        "//source/core/math",
+        "//source/core/testing:testing_utils",
+        "//source/localization:localizer",
+        "//source/localization:pose",
+        "//source/sensing/lidar:lidar_types",
+        "@googletest//:gtest_main",
+    ],
+)
