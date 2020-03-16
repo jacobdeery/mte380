@@ -1,4 +1,3 @@
-#include "icp.h"
 #include "localizer.h"
 #include "pose.h"
 #include "source/core/bus/bus.h"
@@ -12,9 +11,6 @@
 using namespace std::chrono_literals;
 
 constexpr auto kLoopDuration{500ms};
-
-// TODO(jacob): Set this based on experimental testing.
-constexpr double kInlierDist{-1};
 
 using namespace mte;
 
@@ -30,11 +26,9 @@ int main() {
         const auto loop_start = std::chrono::system_clock::now();
 
         const auto points = lidar_receiver.ReceiveLatest();
-        const auto model_points = localization::GetVisibleWallPoints(last_pose);
 
         if (points.has_value()) {
-            const auto lidar_pose = localization::LocalizeToPointCloud(model_points, points.value(),
-                                                                       last_pose, kInlierDist);
+            const auto lidar_pose = localization::Localize(points.value(), last_pose);
             last_pose = lidar_pose;
             sender.Send(last_pose);
         } else {

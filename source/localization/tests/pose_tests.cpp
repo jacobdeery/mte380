@@ -65,7 +65,7 @@ TEST(PoseTests, PoseRoundTrip) {
     const auto p_ser = bus::Serialize(p);
     const auto p_deser = bus::Deserialize<localization::Pose>(p_ser);
 
-    Expect_Pose_Eq(p, p_deser);
+    ExpectPoseEqual(p, p_deser);
 }
 
 TEST(PoseTests, ExtractTransform) {

@@ -29,6 +29,7 @@ cc_library(
     srcs = ["localizer.cpp"],
     hdrs = ["localizer.h"],
     deps = [
+        ":icp",
         ":pose",
         "//source/core:calibration",
         "//source/core/math",
@@ -40,7 +41,6 @@ cc_binary(
     name = "localizer_main",
     srcs = ["localizer_main.cpp"],
     deps = [
-        ":icp",
         ":localizer",
         ":pose",
         "//source/core:logging",

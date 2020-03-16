@@ -1,15 +1,36 @@
 #include "localizer.h"
 
+#include "icp.h"
 #include "source/core/calibration.h"
 #include "source/core/math/angle.h"
 
 #include <cmath>
-#include <iostream>
+#include <limits>
 
 using namespace mte::calibration;
 
 namespace mte {
 namespace localization {
+
+// TODO(jacob): Set this based on experimental testing.
+constexpr double kInlierDist{-1};
+
+constexpr int kMaxIterations{5};
+constexpr double kHalfMillimetre{0.5e-3};
+constexpr double kHalfDegree{mte::math::DegToRad(0.5)};
+
+namespace detail {
+
+bool HasPoseConverged(const Pose& p1, const Pose& p2, double d_pos_max, double d_yaw_max) {
+    if ((p2.Position() - p1.Position()).norm() > d_pos_max) {
+        return false;
+    } else if (fabs(p2.yaw - p1.yaw) > d_yaw_max) {
+        return false;
+    }
+    return true;
+}
+
+}  // namespace detail
 
 lidar::PointCloud GetVisibleWallPoints(const Pose& pose) {
     const double angle_min = pose.yaw - kLidarFOVRight;
@@ -40,6 +61,21 @@ lidar::PointCloud GetVisibleWallPoints(const Pose& pose) {
     }
 
     return lidar::PointCloud{triplets};
+}
+
+Pose Localize(const lidar::PointCloud& pc, const Pose& old_pose) {
+    Pose last_estimate = old_pose;
+
+    for (int i = 0; i < kMaxIterations; ++i) {
+        const auto model_points = GetVisibleWallPoints(last_estimate);
+        const Pose new_estimate{LocalizeToPointCloud(model_points, pc, last_estimate, kInlierDist)};
+        if (detail::HasPoseConverged(last_estimate, new_estimate, kHalfMillimetre, kHalfDegree)) {
+            return new_estimate;
+        }
+        last_estimate = new_estimate;
+    }
+
+    return last_estimate;
 }
 
 }  // namespace localization
